@@ -13,6 +13,7 @@ from app.models import Message
 
 
 def index(request):
+<<<<<<< HEAD
     ls = Product.objects.all()
     ts = {'products': ls}
     return render(request, 'index.html')
@@ -36,3 +37,9 @@ def login(request):
     else:
         form = LoginForm()
         return render(request, 'login.html', {'form': form, 'error': False})
+=======
+    return render(request, 'index.html')
+
+def explore(request):
+    return render(request, 'explore.html')
+>>>>>>> ze
