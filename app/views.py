@@ -11,6 +11,7 @@ from app.models import Message
 
 # Create your views here.
 
+
 def index(request):
     ls = Product.objects.all()
     ts = {'products': ls}
