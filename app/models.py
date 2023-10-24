@@ -9,7 +9,7 @@ class User(models.Model):
     email = models.EmailField()
     password = models.CharField(max_length=100)
     admin = models.BooleanField(default=False)
-    image = models.ImageField(upload_to='images/', null=True, blank=True)
+    image = models.CharField(max_length=100, null=True, blank=True)
     description = models.TextField(null=True, blank=True)
     follower = models.ManyToManyField('self', symmetrical=False, blank=True)
 
@@ -23,7 +23,7 @@ class Product(models.Model):
     name = models.CharField(max_length=70)
     description = models.TextField(null=True, blank=True)
     price = models.DecimalField(max_digits=10, decimal_places=2)
-    image = models.ImageField(upload_to='images/', null=True, blank=True)
+    image = models.CharField(max_length=100, null=True, blank=True)
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
