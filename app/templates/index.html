@@ -1,6 +1,47 @@
 {% extends 'layout_no_login.html' %}
 
+{% block css %}
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'styles/explore.css' %}">
+{% endblock %}
+
+{% block title %}
+    Explore
+{% endblock %}
+
+
+
+
 {% block content %}
-    <h1>Home</h1>
-    <p>Welcome to the home page!</p>
+{% load static %}
+ <div class="container">
+
+ <div class="row row-cols-1 row-cols-md-3 g-4">
+  {% for product in products %}
+    <div class="col">
+      <div class="card">
+        <img src="{% static 'images/teste2.jpg' %}" class="card-img-top" alt="...">
+        <div class="card-body">
+          <h5 class="card-title">{{ product.name }}</h5>
+          <p class="card-text">{{ product.description }}</p>
+          <p class="card-text"><small class="text-muted">Price: ${{ product.price }}</small></p>
+          <a href="#" class="btn btn-primary">Go somewhere</a>
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+</div>
+
+
+</div>
+
+
+
+
+
+
+
+
+
+
 {% endblock %}
