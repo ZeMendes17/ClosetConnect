@@ -15,7 +15,7 @@ from app.models import Message
 def index(request):
     ls = Product.objects.all()
     ts = {'products': ls}
-    return render(request, 'index.html')
+    return render(request, 'index.html', ts)
 
 
 def login(request):
