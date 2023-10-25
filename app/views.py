@@ -40,3 +40,9 @@ def login(request):
 
 def explore(request):
     return render(request, 'explore.html')
+
+
+
+def profile_settings(request):
+    # get user from database
+    return render(request, 'profile_settings.html')
