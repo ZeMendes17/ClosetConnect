@@ -1,13 +1,9 @@
-from django.http import HttpResponse
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login as auth_login
 from django.shortcuts import render, redirect
-from app.forms import RegisterForm
-from django.contrib.auth.models import User as AuthUser
+from app.forms import RegisterForm, UploadUserProfilePicture
 
-from app.models import User
-from app.models import Product
-from app.models import Comment
-from app.models import Message
+from app.models import User, Product
 
 
 # Create your views here.
@@ -42,7 +38,8 @@ def register(request):
                 auth_login(request, user)
 
                 # Create user in our database
-                user = User.objects.create(username=username, email=email, password=raw_password, name=form.cleaned_data['name'])
+                user = User.objects.create(username=username, email=email, password=raw_password,
+                                           name=form.cleaned_data['name'])
                 user.save()
 
                 return redirect('/')
@@ -57,7 +54,29 @@ def explore(request):
     return render(request, 'explore.html')
 
 
-
+@login_required(login_url='/login')
 def profile_settings(request):
-    # get user from database
-    return render(request, 'profile_settings.html')
+    if request.method == 'GET':
+        user = User.objects.get(username=request.user.username)
+        image_form = UploadUserProfilePicture()
+        return render(request, 'profile_settings.html', {'user': user, 'image_form': image_form})
+
+    elif request.method == 'POST' and 'image' in request.FILES:
+        print("POST")
+        user = User.objects.get(username=request.user.username)
+        image_form = UploadUserProfilePicture(request.POST, request.FILES)
+        if image_form.is_valid():
+            file = request.FILES['image']
+
+            if file:
+                user.image = file
+                user.save()
+                print(user.image)
+                return redirect('/account/settings')
+        else:
+            image_form = UploadUserProfilePicture()
+            print(image_form.errors)
+            return render(request, 'profile_settings.html', {'user': user, 'image_form': image_form})
+
+    else:
+        print(request)

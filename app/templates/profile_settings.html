@@ -15,70 +15,61 @@
     <div class="col-12 col-lg-10 col-xl-8 mx-auto">
         <h2 class="h3 mb-4 page-title" style="margin-top: 10px">Settings</h2>
         <div class="my-4">
-            <form>
                 <div class="row mt-5 align-items-center">
                     <div class="col-md-3 text-center mb-5">
                         <div class="avatar avatar-xl">
-                            <img src="https://bootdey.com/img/Content/avatar/avatar6.png" alt="..." class="avatar-img rounded-circle" width="200px" />
+                            <img src="{% if not user.image %} {% static 'images/user_no_picture.png' %} {% endif %}" alt="..." class="avatar-img rounded-circle" width="200px" />
                         </div>
                     </div>
                     <div class="col">
                         <div class="row align-items-center">
                             <div class="col-md-7">
-                                <h4 class="mb-1">Brown, Asher</h4>
-                                <p class="small mb-3"><span class="badge badge-dark">New York, USA</span></p>
+                                <h4 class="mb-1">{{ user.name }}</h4>
+                                <p class="small mb-3">@{{ user.username }}</p>
                             </div>
                         </div>
                         <div class="row mb-4">
-                            <div class="col-md-7">
-                                <p class="text-muted">
-                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris blandit nisl ullamcorper, rutrum metus in, congue lectus. In hac habitasse platea dictumst. Cras urna quam, malesuada vitae risus at,
-                                    pretium blandit sapien.
-                                </p>
-                            </div>
-                            <div class="col">
-                                <p class="small mb-0 text-muted">Nec Urna Suscipit Ltd</p>
-                                <p class="small mb-0 text-muted">P.O. Box 464, 5975 Eget Avenue</p>
-                                <p class="small mb-0 text-muted">(537) 315-1481</p>
-                            </div>
+                                    <p>{% if user.description %} {{ user.description }} {% else %} No description yet, write something
+                                    about yourself!{% endif %}</p>
+
+                                    <!--                                     <textarea
+                                            class="form-control" name="" id="description" style="resize: none; margin-left: 10px; height: 100px"
+                                            placeholder="Write something about yourself..."
+                                    >{% if user.description %}{{ user.description }}{% endif %}</textarea> -->
                         </div>
+                        <form method="post" action="/account/settings/">
+                            <div class="row mb-4">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            {% csrf_token %}
+                                            {{ image_form.image }}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <input type="submit" class="btn btn-success" value="Update Profile Picture">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
                     </div>
                 </div>
                 <hr class="my-4" />
                 <div class="form-row">
                     <div class="form-group col-md-6">
-                        <label for="firstname">Firstname</label>
-                        <input type="text" id="firstname" class="form-control" placeholder="Brown" />
+                        <label for="firstname">Name</label>
+                        <input type="text" id="firstname" class="form-control" placeholder="Brown" value="{{ user.name }}" />
                     </div>
                     <div class="form-group col-md-6">
-                        <label for="lastname">Lastname</label>
-                        <input type="text" id="lastname" class="form-control" placeholder="Asher" />
+                        <label for="lastname">Username</label>
+                        <input type="text" id="lastname" class="form-control" placeholder="Asher" value="{{ user.username }}" />
                     </div>
                 </div>
-                <div class="form-group">
+                <div class="form-group col-md-6">
                     <label for="inputEmail4">Email</label>
-                    <input type="email" class="form-control" id="inputEmail4" placeholder="brown@asher.me" />
-                </div>
-                <div class="form-group">
-                    <label for="inputAddress5">Address</label>
-                    <input type="text" class="form-control" id="inputAddress5" placeholder="P.O. Box 464, 5975 Eget Avenue" />
-                </div>
-                <div class="form-row">
-                    <div class="form-group col-md-6">
-                        <label for="inputCompany5">Company</label>
-                        <input type="text" class="form-control" id="inputCompany5" placeholder="Nec Urna Suscipit Ltd" />
-                    </div>
-                    <div class="form-group col-md-4">
-                        <label for="inputState5">State</label>
-                        <select id="inputState5" class="form-control">
-                            <option selected="">Choose...</option>
-                            <option>...</option>
-                        </select>
-                    </div>
-                    <div class="form-group col-md-2">
-                        <label for="inputZip5">Zip</label>
-                        <input type="text" class="form-control" id="inputZip5" placeholder="98232" />
-                    </div>
+                    <input type="email" class="form-control" id="inputEmail4" placeholder="brown@asher.me" value="{{ user.email }}" />
                 </div>
                 <hr class="my-4" />
                 <div class="row mb-4">
