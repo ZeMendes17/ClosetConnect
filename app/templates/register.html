@@ -33,6 +33,11 @@
                 {{ form.password2 }}
             </div>
         </div>
+        <div style="color: red">
+            {% if form.errors %}
+                <p style="color: red">{{ form.errors }}</p>
+            {% endif %}
+        </div>
         <div class="form-group" style="padding: 10px">
             <div class="col-md-offset-2 col-md-10">
                 <button type="submit" value="Sign up" class="btn btn-primary">Sign up</button>

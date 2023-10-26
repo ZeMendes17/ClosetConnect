@@ -45,11 +45,13 @@ def register(request):
                 user = User.objects.create(username=username, email=email, password=raw_password, name=form.cleaned_data['name'])
                 user.save()
 
-                return redirect('index')
+                return redirect('/')
+        else:
+            return render(request, 'register.html', {'form': form, 'error': True})
     else:
         form = RegisterForm()
         return render(request, 'register.html', {'form': form, 'error': False})
-    return render(request, 'index.html')
+
 
 def explore(request):
     return render(request, 'explore.html')
