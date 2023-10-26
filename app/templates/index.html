@@ -1,4 +1,4 @@
-{% extends 'layout.html' %}
+{% extends 'layout_no_login.html' %}
 
 {% block css %}
     {% load static %}
@@ -14,13 +14,14 @@
 
 {% block content %}
 {% load static %}
+
  <div class="container">
 
  <div class="row row-cols-1 row-cols-md-3 g-4">
   {% for product in products %}
     <div class="col">
       <div class="card">
-        <img src="{% static 'images/teste2.jpg' %}" class="card-img-top" alt="...">
+        <img src="{{ product.image_url }}" class="card-img-top" alt="..." style="height: 450px">
         <div class="card-body">
           <h5 class="card-title">{{ product.name }}</h5>
           <p class="card-text">{{ product.description }}</p>
