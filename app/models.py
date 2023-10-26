@@ -9,13 +9,17 @@ class User(models.Model):
     email = models.EmailField()
     password = models.CharField(max_length=100)
     admin = models.BooleanField(default=False)
-    image = models.CharField(max_length=100, null=True, blank=True)
+    image = models.FileField()
     description = models.TextField(null=True, blank=True)
     follower = models.ManyToManyField('self', symmetrical=False, blank=True)
 
 
     def __str__(self):
         return self.name
+
+    def update_image(self, file):
+        self.image.storage.delete(self.image.name)
+        self.image = file
 
 
 class Product(models.Model):
