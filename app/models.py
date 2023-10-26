@@ -17,6 +17,10 @@ class User(models.Model):
     def __str__(self):
         return self.name
 
+    def update_image(self, file):
+        self.image.storage.delete(self.image.name)
+        self.image = file
+
 
 class Product(models.Model):
     id = models.AutoField(primary_key=True)

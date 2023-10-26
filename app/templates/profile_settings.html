@@ -6,7 +6,7 @@
 {% endblock %}
 
 {% block title %}
-    Settings
+    Account Settings
 {% endblock %}
 
 {% block content %}
@@ -18,7 +18,7 @@
                 <div class="row mt-5 align-items-center">
                     <div class="col-md-3 text-center mb-5">
                         <div class="avatar avatar-xl">
-                            <img src="{% if not user.image %} {% static 'images/user_no_picture.png' %} {% endif %}" alt="..." class="avatar-img rounded-circle" width="200px" />
+                            <img src="{% if not user.image %} {% static 'images/user_no_picture.png' %} {% else %}/media/{{ user.image.name }}{% endif %}" alt="..." class="avatar-img rounded-circle" width="200px" />
                         </div>
                     </div>
                     <div class="col">
@@ -29,20 +29,15 @@
                             </div>
                         </div>
                         <div class="row mb-4">
-                                    <p>{% if user.description %} {{ user.description }} {% else %} No description yet, write something
-                                    about yourself!{% endif %}</p>
-
-                                    <!--                                     <textarea
-                                            class="form-control" name="" id="description" style="resize: none; margin-left: 10px; height: 100px"
-                                            placeholder="Write something about yourself..."
-                                    >{% if user.description %}{{ user.description }}{% endif %}</textarea> -->
+                            <p>{% if user.description %} {{ user.description }} {% else %} No description yet, write something
+                            about yourself!{% endif %}</p>
                         </div>
-                        <form method="post" action="/account/settings/">
+                        <form method="post" action="." enctype="multipart/form-data">
+                            {% csrf_token %}
                             <div class="row mb-4">
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            {% csrf_token %}
                                             {{ image_form.image }}
                                         </div>
                                     </div>
@@ -57,49 +52,73 @@
                     </div>
                 </div>
                 <hr class="my-4" />
-                <div class="form-row">
-                    <div class="form-group col-md-6">
-                        <label for="firstname">Name</label>
-                        <input type="text" id="firstname" class="form-control" placeholder="Brown" value="{{ user.name }}" />
+                <form action="." method="post" style="display: inline;">
+                    {% csrf_token %}
+                    <div class="form-row">
+                        {{ profile_form.as_div }}
                     </div>
-                    <div class="form-group col-md-6">
-                        <label for="lastname">Username</label>
-                        <input type="text" id="lastname" class="form-control" placeholder="Asher" value="{{ user.username }}" />
+                    <hr class="my-4" />
+                    {% if error %}
+                        <p style="color: red">{{ error }}</p>
+                    {% elif success %}
+                        <p style="color: green">{{ success }}</p>
+                    {% endif %}
+                    <input type="submit" class="btn btn-primary" name="profile_change" value="Save Change" />
+                </form>
+                <button type="button" name="password_change" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#firstModal" style="margin-left: 10px">
+                  Change Password
+                </button>
+                <button type="button" name="delete_account" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#secondModal" style="margin-left: 10px">
+                  Delete Account
+                </button>
+
+        <!-- Password Modal -->
+        <div class="modal fade" id="firstModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Changing the password</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+            <form action="." method="post">
+                {% csrf_token %}
+                  <div class="modal-body">
+                    <div class="form-row">
+                        {{ password_form.as_div }}
                     </div>
-                </div>
-                <div class="form-group col-md-6">
-                    <label for="inputEmail4">Email</label>
-                    <input type="email" class="form-control" id="inputEmail4" placeholder="brown@asher.me" value="{{ user.email }}" />
-                </div>
-                <hr class="my-4" />
-                <div class="row mb-4">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="inputPassword4">Old Password</label>
-                            <input type="password" class="form-control" id="inputPassword5" />
-                        </div>
-                        <div class="form-group">
-                            <label for="inputPassword5">New Password</label>
-                            <input type="password" class="form-control" id="inputPassword5" />
-                        </div>
-                        <div class="form-group">
-                            <label for="inputPassword6">Confirm Password</label>
-                            <input type="password" class="form-control" id="inputPassword6" />
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <p class="mb-2">Password requirements</p>
-                        <p class="small text-muted mb-2">To create a new password, you have to meet all of the following requirements:</p>
-                        <ul class="small text-muted pl-4 mb-0">
-                            <li>Minimum 8 character</li>
-                            <li>At least one special character</li>
-                            <li>At least one number</li>
-                            <li>Can’t be the same as a previous password</li>
-                        </ul>
-                    </div>
-                </div>
-                <button type="submit" class="btn btn-primary">Save Change</button>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <input type="submit" class="btn btn-success" name="password_change" value="Confirm Changes"/>
+                  </div>
             </form>
+            </div>
+          </div>
+        </div>
+
+        <!-- Delete Modal -->
+        <div class="modal fade" id="secondModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Changing the password</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+            <form action="." method="post">
+                {% csrf_token %}
+                  <div class="modal-body">
+                    <div class="form-row">
+                        Are you sure you want to delete your account?
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <input type="submit" class="btn btn-danger" name="delete_account" value="Delete Account"/>
+                  </div>
+            </form>
+            </div>
+          </div>
+        </div>
         </div>
     </div>
 </div>

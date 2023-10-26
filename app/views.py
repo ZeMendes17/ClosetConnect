@@ -1,7 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login as auth_login
 from django.shortcuts import render, redirect
-from app.forms import RegisterForm, UploadUserProfilePicture
+from app.forms import RegisterForm, UploadUserProfilePicture, UpdateProfile, UpdatePassword
 
 from app.models import User, Product
 
@@ -12,6 +12,9 @@ from app.models import User, Product
 def index(request):
     ls = Product.objects.all()
     ts = {'products': ls}
+    if request.user.is_authenticated:
+        user = User.objects.get(username=request.user.username)
+        return render(request, 'index.html', {'user': user, 'products': ls})
     return render(request, 'index.html', ts)
 
 
@@ -59,7 +62,11 @@ def profile_settings(request):
     if request.method == 'GET':
         user = User.objects.get(username=request.user.username)
         image_form = UploadUserProfilePicture()
-        return render(request, 'profile_settings.html', {'user': user, 'image_form': image_form})
+        profile_form = UpdateProfile(initial={'name': user.name, 'username': user.username, 'email': user.email,
+                                              'description': user.description})
+        password_form = UpdatePassword()
+        return render(request, 'profile_settings.html', {'user': user, 'image_form': image_form,
+                                                         'profile_form': profile_form, 'password_form': password_form})
 
     elif request.method == 'POST' and 'image' in request.FILES:
         print("POST")
@@ -70,6 +77,7 @@ def profile_settings(request):
 
             if file:
                 user.image = file
+                user.update_image(file)
                 user.save()
                 print(user.image)
                 return redirect('/account/settings')
@@ -78,5 +86,62 @@ def profile_settings(request):
             print(image_form.errors)
             return render(request, 'profile_settings.html', {'user': user, 'image_form': image_form})
 
-    else:
-        print(request)
+    elif request.method == 'POST' and 'profile_change' in request.POST:
+        # get the form info
+        user = User.objects.get(username=request.user.username)
+        profile_form = UpdateProfile(request.POST)
+        if profile_form.is_valid():
+            if user.name != profile_form.cleaned_data['name']:
+                user.name = profile_form.cleaned_data['name']
+            if user.username != profile_form.cleaned_data['username']:
+                user.username = profile_form.cleaned_data['username']
+            if user.email != profile_form.cleaned_data['email']:
+                user.email = profile_form.cleaned_data['email']
+            if user.description != profile_form.cleaned_data['description']:
+                user.description = profile_form.cleaned_data['description']
+            user.save()
+            # update user info auth
+            request.user.username = profile_form.cleaned_data['username']
+            request.user.email = profile_form.cleaned_data['email']
+            request.user.save()
+            return redirect('/account/settings')
+
+    elif request.method == 'POST' and 'password_change' in request.POST:
+        user = User.objects.get(username=request.user.username)
+        password_form = UpdatePassword(request.POST)
+        image_form = UploadUserProfilePicture()
+        profile_form = UpdateProfile(initial={'name': user.name, 'username': user.username, 'email': user.email,
+                                              'description': user.description})
+        if password_form.is_valid():
+            if user.password == password_form.cleaned_data['old_password']:
+                if password_form.cleaned_data['new_password'] == password_form.cleaned_data['confirm_new_password']:
+                    user.password = password_form.cleaned_data['new_password']
+                    request.user.password = password_form.cleaned_data['new_password']
+                    user.save()
+                    print('Password changed successfully!')
+                    return render(request, 'profile_settings.html', {'user': user, 'password_form': password_form,
+                                                                     'image_form': image_form,
+                                                                        'profile_form': profile_form,
+                                                                     'success': 'Password changed successfully!'})
+                else:
+                    print('Passwords do not match!')
+                    return render(request, 'profile_settings.html', {'user': user, 'password_form': password_form,
+                                                                     'image_form': image_form,
+                                                                        'profile_form': profile_form
+                                                                     , 'error': 'Passwords do not match!'})
+            else:
+                print('Wrong password!')
+                return render(request, 'profile_settings.html', {'user': user, 'password_form': password_form,
+                                                                    'image_form': image_form,
+                                                                    'profile_form': profile_form
+                                                                 , 'error': 'Wrong password!'})
+        else:
+            return render(request, 'profile_settings.html', {'user': user, 'password_form': password_form,
+                                                                    'image_form': image_form,
+                                                                    'profile_form': profile_form,
+                                                                    'error': 'Invalid form!'})
+    elif request.method == 'POST' and 'delete_account' in request.POST:
+        user = User.objects.get(username=request.user.username)
+        request.user.delete()
+        user.delete()
+        return redirect('/login')

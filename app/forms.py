@@ -22,3 +22,19 @@ class UploadUserProfilePicture(forms.Form):
                'accept': 'image/*'
                }
     ))
+
+
+class UpdateProfile(forms.Form):
+    name = forms.CharField(max_length=100, required=True, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    username = forms.CharField(max_length=100, required=True, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    email = forms.EmailField(max_length=100, required=True, widget=forms.EmailInput(attrs={'class': 'form-control'}))
+    description = forms.CharField(max_length=100, required=False, widget=forms.Textarea(
+        attrs={'class': 'form-control',
+               'style': 'resize: none; height: 100px;',
+               'placeholder': 'Write something about yourself...'
+               }))
+
+class UpdatePassword(forms.Form):
+    old_password = forms.CharField(max_length=100, required=True, widget=forms.PasswordInput(attrs={'class': 'form-control'}))
+    new_password = forms.CharField(max_length=100, required=True, widget=forms.PasswordInput(attrs={'class': 'form-control'}))
+    confirm_new_password = forms.CharField(max_length=100, required=True, widget=forms.PasswordInput(attrs={'class': 'form-control'}))

@@ -44,7 +44,7 @@
         <li class="nav-item me-3 me-lg-0 dropdown">
           <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown1" role="button" data-mdb-toggle="dropdown"
             aria-expanded="false" data-bs-toggle='dropdown'>
-            <img src="{% static 'images/user_no_picture.png' %}" class="rounded-circle" height="40"
+            <img src="{% if not user.image %} {% static 'images/user_no_picture.png' %} {% else %}/media/{{ user.image.name }}{% endif %}" class="rounded-circle" height="40"
               alt="" loading="lazy" />
           </a>
           <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown1">
