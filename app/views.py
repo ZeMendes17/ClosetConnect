@@ -27,6 +27,10 @@ def register(request):
             if u:
                 return render(request, 'register.html', {'form': form, 'error': True})
 
+            # Check if passwords match
+            if form.cleaned_data['password'] != form.cleaned_data['second_password']:
+                # The error is that passwords don't match
+                return render(request, 'register.html', {'form': form, 'error': True})
             else:
                 # Autenticate user
                 user = authenticate(username=form.cleaned_data.get('username'),
@@ -40,7 +44,7 @@ def register(request):
 
                             )
                 user.save()
-                return redirect('/index')
+                return redirect('/login')
     else:
         form = RegistForm()
         return render(request, 'register.html', {'form': form, 'error': False})

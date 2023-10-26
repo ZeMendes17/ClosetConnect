@@ -17,6 +17,11 @@
                 {{ form.password }}
             </div>
         </div>
+        {% if form.errors %}
+            <p class="validation-summary-errors" style="color:red">Please enter a correct user name
+                and password.</p>
+        {% endif %}
+        <input type="hidden" name="next" value="/"/>
         <input type="submit" value="Log in" class="btn btn-primary"/>
         <p>Dont have an account yet? <a href="/register/" style="{color: darkblue}">Register</a></p>
     </form>
