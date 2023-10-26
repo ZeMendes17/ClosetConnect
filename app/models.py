@@ -29,6 +29,9 @@ class Product(models.Model):
     def __str__(self):
         return self.name
 
+    def image_url(self):
+        return f'/static/images/{self.name}.jpg'
+
 
 class Comment(models.Model):
     id = models.AutoField(primary_key=True)
