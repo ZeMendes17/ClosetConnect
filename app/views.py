@@ -1,7 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login as auth_login
 from django.shortcuts import render, redirect
-from app.forms import RegisterForm, UploadUserProfilePicture, UpdateProfile, UpdatePassword
+from app.forms import RegisterForm, UploadUserProfilePicture, UpdateProfile, UpdatePassword, ProductForm
 
 from app.models import User, Product
 
@@ -11,11 +11,11 @@ from app.models import User, Product
 
 def index(request):
     ls = Product.objects.all()
-    ts = {'products': ls}
-    if request.user.is_authenticated:
+    try:
         user = User.objects.get(username=request.user.username)
         return render(request, 'index.html', {'user': user, 'products': ls})
-    return render(request, 'index.html', ts)
+    except User.DoesNotExist:
+        return render(request, 'index.html', {'user': None, 'products': ls})
 
 
 def register(request):
@@ -121,27 +121,50 @@ def profile_settings(request):
                     print('Password changed successfully!')
                     return render(request, 'profile_settings.html', {'user': user, 'password_form': password_form,
                                                                      'image_form': image_form,
-                                                                        'profile_form': profile_form,
+                                                                     'profile_form': profile_form,
                                                                      'success': 'Password changed successfully!'})
                 else:
                     print('Passwords do not match!')
                     return render(request, 'profile_settings.html', {'user': user, 'password_form': password_form,
                                                                      'image_form': image_form,
-                                                                        'profile_form': profile_form
-                                                                     , 'error': 'Passwords do not match!'})
+                                                                     'profile_form': profile_form
+                        , 'error': 'Passwords do not match!'})
             else:
                 print('Wrong password!')
                 return render(request, 'profile_settings.html', {'user': user, 'password_form': password_form,
-                                                                    'image_form': image_form,
-                                                                    'profile_form': profile_form
-                                                                 , 'error': 'Wrong password!'})
+                                                                 'image_form': image_form,
+                                                                 'profile_form': profile_form
+                    , 'error': 'Wrong password!'})
         else:
             return render(request, 'profile_settings.html', {'user': user, 'password_form': password_form,
-                                                                    'image_form': image_form,
-                                                                    'profile_form': profile_form,
-                                                                    'error': 'Invalid form!'})
+                                                             'image_form': image_form,
+                                                             'profile_form': profile_form,
+                                                             'error': 'Invalid form!'})
     elif request.method == 'POST' and 'delete_account' in request.POST:
         user = User.objects.get(username=request.user.username)
         request.user.delete()
         user.delete()
         return redirect('/login')
+
+
+@login_required(login_url='/login')
+def sell(request):
+    if request.method == 'POST':
+        form = ProductForm(request.POST, request.FILES)
+        if form.is_valid():
+            product = form.save(commit=False)
+            product.user_id = User.objects.get(username=request.user.username)
+            product.save()
+
+            # Agora, associe a imagem ao produto
+            if 'image' in request.FILES:
+                product.image = request.FILES[
+                    'image']  # 'image' deve corresponder ao nome do campo de arquivo no formulário
+
+            product.save()  # Salve o produto com a imagem associada
+            # Redirecionar para onde você desejar após a criação do produto
+            return redirect('/')
+    else:
+        form = ProductForm()
+
+    return render(request, 'Sell.html', {'form': form})

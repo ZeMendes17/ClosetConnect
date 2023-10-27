@@ -11,8 +11,8 @@
 
 
 
-
 {% block content %}
+
 {% load static %}
 
  <div class="container">
@@ -20,12 +20,12 @@
  <div class="row row-cols-1 row-cols-md-3 g-4">
   {% for product in products %}
     <div class="col">
-      <div class="card">
-        <img src="{{ product.image_url }}" class="card-img-top" alt="..." style="height: 450px">
+      <div class="card" >
+          <img src="{% if product.image %}{{ product.image.url }}{% else %}{% static 'images/user_no_picture.png' %}{% endif %}" class="card-img-top" alt="..." style="height: 450px">
         <div class="card-body">
           <h5 class="card-title">{{ product.name }}</h5>
-          <p class="card-text">{{ product.description }}</p>
-          <p class="card-text"><small class="text-muted">Price: ${{ product.price }}</small></p>
+            <p class="card-text">Price: ${{ product.price }}</p>
+          <p class="card-text"><small class="text-muted">{{ product.description }}</small></p>
           <a href="#" class="btn btn-primary">Go somewhere</a>
         </div>
       </div>
@@ -35,14 +35,6 @@
 
 
 </div>
-
-
-
-
-
-
-
-
 
 
 {% endblock %}
