@@ -2,6 +2,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from app.models import User as DBUser
+from .models import Product
 
 
 class RegisterForm(UserCreationForm):
@@ -38,3 +39,12 @@ class UpdatePassword(forms.Form):
     old_password = forms.CharField(max_length=100, required=True, widget=forms.PasswordInput(attrs={'class': 'form-control'}))
     new_password = forms.CharField(max_length=100, required=True, widget=forms.PasswordInput(attrs={'class': 'form-control'}))
     confirm_new_password = forms.CharField(max_length=100, required=True, widget=forms.PasswordInput(attrs={'class': 'form-control'}))
+
+
+class ProductForm(forms.ModelForm):
+    class Meta:
+        model = Product
+        fields = ['name', 'description', 'image', 'price']
+        labels = {
+            'name': 'Product name',
+        }

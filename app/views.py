@@ -1,7 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login as auth_login
 from django.shortcuts import render, redirect
-from app.forms import RegisterForm, UploadUserProfilePicture, UpdateProfile, UpdatePassword
+from app.forms import RegisterForm, UploadUserProfilePicture, UpdateProfile, UpdatePassword, ProductForm
 
 from app.models import User, Product
 
@@ -145,3 +145,26 @@ def profile_settings(request):
         request.user.delete()
         user.delete()
         return redirect('/login')
+
+
+@login_required(login_url='/login')
+def sell(request):
+    if request.method == 'POST':
+        form = ProductForm(request.POST, request.FILES)
+        if form.is_valid():
+            product = form.save(commit=False)
+            product.user_id = User.objects.get(username=request.user.username)
+            product.save()
+
+            # Agora, associe a imagem ao produto
+            if 'image' in request.FILES:
+                product.image = request.FILES[
+                    'image']  # 'image' deve corresponder ao nome do campo de arquivo no formulário
+
+            product.save()  # Salve o produto com a imagem associada
+            # Redirecionar para onde você desejar após a criação do produto
+            return redirect('/')
+    else:
+        form = ProductForm()
+
+    return render(request, 'Sell.html', {'form': form})
