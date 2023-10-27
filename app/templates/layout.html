@@ -30,7 +30,7 @@
         <li class="nav-item">
           <a class="nav-link" href="#">Explore</a>
         </li>
-      {% if request.user.is_authenticated %}
+      {% if user %}
         <li class="nav-item">
           <a class="nav-link" href="#">Followed</a>
         </li>
@@ -40,7 +40,7 @@
         {% endif %}
       </ul>
       <ul class="navbar-nav d-flex flex-row ms-auto me-3">
-        {% if request.user.is_authenticated %}
+        {% if user %}
         <li class="nav-item me-3 me-lg-0 dropdown">
           <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown1" role="button" data-mdb-toggle="dropdown"
             aria-expanded="false" data-bs-toggle='dropdown'>

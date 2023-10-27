@@ -11,11 +11,11 @@ from app.models import User, Product
 
 def index(request):
     ls = Product.objects.all()
-    ts = {'products': ls}
-    if request.user.is_authenticated:
+    try:
         user = User.objects.get(username=request.user.username)
         return render(request, 'index.html', {'user': user, 'products': ls})
-    return render(request, 'index.html', ts)
+    except User.DoesNotExist:
+        return render(request, 'index.html', {'user': None, 'products': ls})
 
 
 def register(request):
@@ -121,25 +121,25 @@ def profile_settings(request):
                     print('Password changed successfully!')
                     return render(request, 'profile_settings.html', {'user': user, 'password_form': password_form,
                                                                      'image_form': image_form,
-                                                                        'profile_form': profile_form,
+                                                                     'profile_form': profile_form,
                                                                      'success': 'Password changed successfully!'})
                 else:
                     print('Passwords do not match!')
                     return render(request, 'profile_settings.html', {'user': user, 'password_form': password_form,
                                                                      'image_form': image_form,
-                                                                        'profile_form': profile_form
-                                                                     , 'error': 'Passwords do not match!'})
+                                                                     'profile_form': profile_form
+                        , 'error': 'Passwords do not match!'})
             else:
                 print('Wrong password!')
                 return render(request, 'profile_settings.html', {'user': user, 'password_form': password_form,
-                                                                    'image_form': image_form,
-                                                                    'profile_form': profile_form
-                                                                 , 'error': 'Wrong password!'})
+                                                                 'image_form': image_form,
+                                                                 'profile_form': profile_form
+                    , 'error': 'Wrong password!'})
         else:
             return render(request, 'profile_settings.html', {'user': user, 'password_form': password_form,
-                                                                    'image_form': image_form,
-                                                                    'profile_form': profile_form,
-                                                                    'error': 'Invalid form!'})
+                                                             'image_form': image_form,
+                                                             'profile_form': profile_form,
+                                                             'error': 'Invalid form!'})
     elif request.method == 'POST' and 'delete_account' in request.POST:
         user = User.objects.get(username=request.user.username)
         request.user.delete()
