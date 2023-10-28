@@ -11,6 +11,7 @@
     {% load bootstrap_icons %}
     {% load static %}
     <link rel="stylesheet" href="{% static 'styles/layout.css' %}">
+    {% block style %}{% endblock %}
 
 
 
@@ -57,11 +58,15 @@
 
           <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown1" role="button" data-mdb-toggle="dropdown"
             aria-expanded="false" data-bs-toggle='dropdown'>
-            <img src="{% if not user.image %} {% static 'images/user_no_picture.png' %} {% else %}/media/{{ user.image.name }}{% endif %}" class="rounded-circle" height="40"
-              alt="" loading="lazy" />
+            <img src="{% if user.image %}/media/{{ user.image.name }}{% else %}{% static 'images/user_no_picture.png' %}{% endif %}"
+                     style="width: 40px; height: 40px; object-fit: cover"
+                     class="rounded-circle" alt="">
           </a>
           <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown1">
-            <li><a class="dropdown-item" href="#">My Account</a></li>
+
+            <li><a class="dropdown-item" href="/account/profile">My Account</a></li>
+            <li><a class="dropdown-item" href="/account/sell">Sell</a></li>
+
             <li><a class="dropdown-item" href="#">Favorites</a></li>
               <li><a class="dropdown-item" href="/account/settings">Settings</a></li>
               <li>

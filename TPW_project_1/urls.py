@@ -31,4 +31,5 @@ urlpatterns = [
     path("explore/", views.explore, name="explore"),
     path("account/settings/", views.profile_settings, name="profile_settings"),
     path("account/sell/", views.sell, name="sell"),
+    path("account/profile/", views.profile, name="profile"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

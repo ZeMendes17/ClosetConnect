@@ -3,7 +3,7 @@ from django.contrib.auth import authenticate, login as auth_login
 from django.shortcuts import render, redirect
 from app.forms import RegisterForm, UploadUserProfilePicture, UpdateProfile, UpdatePassword, ProductForm
 
-from app.models import User, Product
+from app.models import User, Product, Follower
 
 
 # Create your views here.
@@ -169,3 +169,29 @@ def sell(request):
         form = ProductForm()
 
     return render(request, 'Sell.html', {'form': form})
+
+
+
+@login_required(login_url='/login')
+def profile(request):
+    if request.method == "GET":
+        user = User.objects.get(username=request.user.username)
+
+        # get the followers
+        followers = Follower.objects.filter(followed=user)
+        followers_list = []
+        for follower in followers:
+            followers_list.append(follower.follower)
+
+        # get the following
+        following = Follower.objects.filter(follower=user)
+        following_list = []
+        for followed in following:
+            following_list.append(followed.followed)
+
+        # get user's products
+        products = Product.objects.filter(user_id=user)
+
+        return render(request, 'profile.html', {'user': user, 'followers': followers_list,
+                                                'following': following_list, 'products': products})
+
