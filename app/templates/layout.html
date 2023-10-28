@@ -12,6 +12,8 @@
     {% load static %}
     <link rel="stylesheet" href="{% static 'styles/layout.css' %}">
 
+
+
 </head>
 <body>
 <!-- Navbar -->
@@ -35,8 +37,16 @@
           <a class="nav-link" href="#">Followed</a>
         </li>
           <li class="nav-item">
-          <a class="nav-link" href="#">Message</a>
-        </li>
+            <a class="nav-link" href="#">Message</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/account/sell">
+                <span class="glyphicon glyphicon-usd"></span> New Product
+            </a>
+          </li>
+
+
+
         {% endif %}
       </ul>
       <ul class="navbar-nav d-flex flex-row ms-auto me-3">
@@ -52,7 +62,6 @@
           </a>
           <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown1">
             <li><a class="dropdown-item" href="#">My Account</a></li>
-            <li><a class="dropdown-item" href="/account/sell">Sell</a></li>
             <li><a class="dropdown-item" href="#">Favorites</a></li>
               <li><a class="dropdown-item" href="/account/settings">Settings</a></li>
               <li>

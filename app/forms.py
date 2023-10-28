@@ -48,3 +48,9 @@ class ProductForm(forms.ModelForm):
         labels = {
             'name': 'Product name',
         }
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control', 'style': 'max-width: 100%'}),
+            'description': forms.Textarea(attrs={'class': 'form-control', 'style': 'max-width: 100%; resize: none; height: 100px;', 'placeholder': 'Describe your item..'}),
+            'image': forms.FileInput(attrs={'class': 'form-control', 'id': 'image', 'name': 'input_file', 'accept': 'image/*'}),
+            'price': forms.NumberInput(attrs={'class': 'form-control'}),
+        }

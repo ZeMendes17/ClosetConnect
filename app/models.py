@@ -27,7 +27,7 @@ class Product(models.Model):
     name = models.CharField(max_length=70)
     description = models.TextField(null=True, blank=True)
     price = models.DecimalField(max_digits=10, decimal_places=2)
-    image = models.FileField()
+    image = models.ImageField(upload_to='product_images/', null=True, blank=True)
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):

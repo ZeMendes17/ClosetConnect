@@ -147,6 +147,7 @@ def profile_settings(request):
         return redirect('/login')
 
 
+
 @login_required(login_url='/login')
 def sell(request):
     if request.method == 'POST':
@@ -154,7 +155,7 @@ def sell(request):
         if form.is_valid():
             product = form.save(commit=False)
             product.user_id = User.objects.get(username=request.user.username)
-            product.save()
+
 
             # Agora, associe a imagem ao produto
             if 'image' in request.FILES:
