@@ -18,7 +18,9 @@
                 <div class="row mt-5 align-items-center">
                     <div class="col-md-3 text-center mb-5">
                         <div class="avatar avatar-xl">
-                            <img src="{% if not user.image %} {% static 'images/user_no_picture.png' %} {% else %}/media/{{ user.image.name }}{% endif %}" alt="..." class="avatar-img rounded-circle" width="200px" />
+                            <img src="{% if user.image %}/media/{{ user.image.name }}{% else %}{% static 'images/user_no_picture.png' %}{% endif %}"
+                     style="width: 10vw; height: 9vw; object-fit: cover"
+                     class="rounded-circle" alt="">
                         </div>
                     </div>
                     <div class="col">

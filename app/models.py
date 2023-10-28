@@ -11,8 +11,6 @@ class User(models.Model):
     admin = models.BooleanField(default=False)
     image = models.FileField()
     description = models.TextField(null=True, blank=True)
-    follower = models.ManyToManyField('self', symmetrical=False, blank=True)
-
 
     def __str__(self):
         return self.name
@@ -34,8 +32,6 @@ class Product(models.Model):
         return self.name
 
 
-
-
 class Comment(models.Model):
     id = models.AutoField(primary_key=True)
     text = models.TextField(null=True, blank=True)
@@ -45,6 +41,7 @@ class Comment(models.Model):
     def __str__(self):
         return self.text
 
+
 class Message(models.Model):
     id = models.AutoField(primary_key=True)
     receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='receiver')
@@ -53,3 +50,12 @@ class Message(models.Model):
 
     def __str__(self):
         return self.text
+
+
+class Follower(models.Model):
+    id = models.AutoField(primary_key=True)
+    follower = models.ForeignKey(User, on_delete=models.CASCADE, related_name='follower')
+    followed = models.ForeignKey(User, on_delete=models.CASCADE, related_name='followed')
+
+    def __str__(self):
+        return self.follower.name + " follows " + self.followed.name
