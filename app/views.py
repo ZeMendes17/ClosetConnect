@@ -203,3 +203,34 @@ def profile(request):
                 product.delete()
                 return redirect('/account/profile')
 
+
+@login_required(login_url='/login')
+def product_settings(request, product_id):
+    if request.method == "GET":
+        user = User.objects.get(username=request.user.username)
+        product = Product.objects.get(id=product_id)
+        purchases = 0
+        favorites = 0
+        reviews = 0
+        avg_rating = 0
+        return render(request, 'product_settings.html', {'product': product, 'user': user,
+                                                         'purchases': purchases, 'favorites': favorites,
+                                                         'reviews': reviews, 'avg_rating': avg_rating})
+
+#    elif request.method == "POST":
+#        product = Product.objects.get(id=product_id)
+#        if 'delete' in request.POST:
+#            product.delete()
+#            return redirect('/account/profile')
+#        elif 'update' in request.POST:
+#            form = ProductForm(request.POST, request.FILES)
+#            if form.is_valid():
+#                product.title = form.cleaned_data['title']
+#                product.description = form.cleaned_data['description']
+#                product.price = form.cleaned_data['price']
+#                product.category = form.cleaned_data['category']
+#                product.image = request.FILES['image']
+#                product.save()
+#                return redirect('/account/profile')
+#            else:
+#                return render(request, 'product_settings.html', {'product': product, 'error': True})

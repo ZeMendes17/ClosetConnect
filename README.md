@@ -16,4 +16,4 @@ TODO:
 - [ ] Favorites page
 - [ ] Cart page
 - [ ] Checkout page
-- [ ] Product page seen by the creator
+- [ ] Product page seen by the creator (stats, edit)
