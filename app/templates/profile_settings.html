@@ -17,7 +17,7 @@
         <div class="my-4">
                 <div class="row mt-5 align-items-center">
                     <div class="col-md-3 text-center mb-5">
-                        <div class="avatar avatar-xl">
+                        <div class="d-flex">
                             <img src="{% if user.image %}/media/{{ user.image.name }}{% else %}{% static 'images/user_no_picture.png' %}{% endif %}"
                      style="width: 10vw; height: 9vw; object-fit: cover"
                      class="rounded-circle" alt="">
@@ -103,7 +103,7 @@
           <div class="modal-dialog">
             <div class="modal-content">
               <div class="modal-header">
-                <h5 class="modal-title" id="staticBackdropLabel">Changing the password</h5>
+                <h5 class="modal-title" id="staticBackdropLabel">Deleting your account</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
             <form action="." method="post">
