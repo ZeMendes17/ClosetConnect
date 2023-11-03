@@ -6,7 +6,7 @@ TODO:
 - [ ] Main page
 - [ ] Login page
 - [ ] Register page
-- [ ] Profile page
+- [x] Profile page
 - [x] Profile Settings page
 - [ ] Admin page
 - [ ] See follwing page
@@ -16,3 +16,4 @@ TODO:
 - [ ] Favorites page
 - [ ] Cart page
 - [ ] Checkout page
+- [ ] Product page seen by the creator
