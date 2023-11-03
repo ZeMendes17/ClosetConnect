@@ -195,3 +195,11 @@ def profile(request):
         return render(request, 'profile.html', {'user': user, 'followers': followers_list,
                                                 'following': following_list, 'products': products})
 
+    elif request.method == "POST":
+        for i in request.POST:
+            if 'delete_' in i:
+                product_id = i.split('_')[1]
+                product = Product.objects.get(id=product_id)
+                product.delete()
+                return redirect('/account/profile')
+
