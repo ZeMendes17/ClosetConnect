@@ -42,7 +42,9 @@
                     <hr class="my-4" />
                     <div class="col-md-offset-2 col-md-10">
 
-                        <button type="button" class="btn btn-primary" id="openModal">Sell</button>
+                        <button type="button" class="btn btn-success" onclick="showConfirmationModal()">Sell</button>
+
+
 
                     </div>
 
@@ -59,75 +61,64 @@
 
 
 <!-- Modal -->
-<div class="modal fade" id="itemModal" tabindex="-1" role="dialog" aria-labelledby="itemModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
+<div class="modal fade" id="itemModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+<div class="modal-dialog">
     <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="itemModalLabel">Confirm Sale</h5>
-
-      </div>
-      <div class="modal-body">
-          <div class="card">
-            <img id="itemImage" src="" class="card-img-top" alt="..." style="height: 450px">
-            <div class="card-body">
-            <h5 class="card-title" id="itemName"></h5>
-            <p class="card-text" id="itemPrice"></p>
-            <p class="card-text" id="itemDescription"></p>
-            </div>
-          </div>
-
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-        <button type="button" class="btn btn-primary" id="confirmSale">Confirm</button>
-
-      </div>
+        <div class="modal-header">
+            <h5 class="modal-title">Confirm your item details</h5>
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <p><strong>Name:</strong> <span id="itemName"></span></p>
+            <p><strong>Description:</strong> <span id="itemDescription"></span></p>
+            <p><strong>Price:</strong> <span id="itemPrice"></span></p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-success" data-bs-dismiss="modal" onclick="submitForm()">Confirm</button>
+        </div>
     </div>
-  </div>
+</div>
+
 </div>
 
 
 
 
+
+
+
 </div>
 
-<!-- Inclua o script jQuery separadamente antes do seu código JavaScript -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+    function showConfirmationModal() {
+        // Obtenha os valores do formulário
+        var itemName = document.getElementById("id_name").value;
+        var itemDescription = document.getElementById("id_description").value;
+        var itemPrice = document.getElementById("id_price").value;
 
-<script>
-$(document).ready(function() {
-  // Quando o botão "Sell" é clicado
-  $("#openModal").click(function() {
-    // Preencha os detalhes do item no modal com os dados do JSON
-    var itemName = $("input[name='name']").val();
-    var itemDescription = $("textarea[name='description']").val();
-    var itemPrice = $("input[name='price']").val();
+        // Atualize o modal com os valores
+        document.getElementById("itemName").textContent = itemName;
+        document.getElementById("itemDescription").textContent = itemDescription;
+        document.getElementById("itemPrice").textContent = itemPrice;
 
+        // Exiba o modal
+        var myModal = new bootstrap.Modal(document.getElementById('itemModal'), {
+            backdrop: 'static',
+            keyboard: false
+        });
+        myModal.show();
+    }
 
-    $("#itemName").text(itemName);
-    $("#itemDescription").text("Description: " + itemDescription);
-    $("#itemPrice").text("Price: $" + itemPrice);
-
-
-    // Abra o modal
-    $("#itemModal").modal("show");
-  });
-
-  // Quando o botão "Cancel" no modal é clicado
-  $("#itemModal .btn-secondary").click(function() {
-    // Feche o modal
-    $("#itemModal").modal("hide");
-  });
-
-  // Quando o botão "Confirm" no modal é clicado
-  $("#confirmSale").click(function() {
-    // Submeta o formulário principal
-    $("#formPrincipal").submit();
-  });
-});
-
-
+    function submitForm() {
+        // Envie o formulário após a confirmação
+        document.getElementById("formPrincipal").submit();
+    }
 </script>
+
+
 
 
 

@@ -13,6 +13,7 @@ def index(request):
     ls = Product.objects.all()
     try:
         user = User.objects.get(username=request.user.username)
+        ls = Product.objects.exclude(user_id=user)
         return render(request, 'index.html', {'user': user, 'products': ls})
     except User.DoesNotExist:
         return render(request, 'index.html', {'user': None, 'products': ls})
