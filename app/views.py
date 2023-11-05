@@ -3,8 +3,8 @@ from django.contrib.auth import authenticate, login as auth_login
 from django.shortcuts import render, redirect
 from app.forms import RegisterForm, UploadUserProfilePicture, UpdateProfile, UpdatePassword, ProductForm
 
-from app.models import User, Product, Follower
-
+from app.models import User, Product, Follower, Cart, CartItem
+from django.shortcuts import get_object_or_404
 
 # Create your views here.
 
@@ -235,3 +235,65 @@ def product_settings(request, product_id):
 #                return redirect('/account/profile')
 #            else:
 #                return render(request, 'product_settings.html', {'product': product, 'error': True})
+
+
+
+
+@login_required(login_url='/login')
+def add_to_cart(request, product_id):
+    try:
+        # Obtém o produto com base no product_id da URL
+        product = get_object_or_404(Product, id=product_id)
+        user = User.objects.get(username=request.user.username)
+
+        # Obtém ou cria o carrinho para o usuário
+        cart, created = Cart.objects.get_or_create(user=user)
+
+        # Verifica se o item já existe no carrinho para esse produto
+        cart_item, created = CartItem.objects.get_or_create(product=product, user=user)
+
+        if not created:
+            # Se o item já existir no carrinho, aumenta a quantidade em 1
+            cart_item.quantity += 1
+        else:
+            # Se é um novo item no carrinho, defina o preço com o preço atual do produto
+            cart_item.price = product.price
+
+        # Calcula o preço total para este item no carrinho
+        cart_item.price = cart_item.quantity * float(product.price)
+        cart.price += float(product.price)
+
+        print("cart price: ", cart.price)
+        print("cart item price: ", cart_item.price)
+        cart.save()
+        cart_item.save()
+
+        # Adiciona o item ao carrinho do usuário
+        cart.items.add(cart_item)
+
+
+
+        # Redireciona o usuário para a página do carrinho ou alguma outra página apropriada
+        return redirect('/')  # Substitua 'carrinho' pelo nome da URL da página do carrinho
+
+    except Product.DoesNotExist:
+        # Lida com o caso em que o produto não existe
+        return redirect('pagina_de_erro')  # Substitua 'pagina_de_erro' pelo nome da URL da página de erro apropriada
+
+
+
+@login_required(login_url='/login')
+def viewCart(request):
+    user = User.objects.get(username=request.user.username)
+    cart, created = Cart.objects.get_or_create(user=user)
+
+    print(cart)
+    print(cart.items.all())
+
+    for item in cart.items.all():
+        print(item.product.name)
+        print(item.quantity)
+        print(item.price)
+
+
+    return render(request, 'cart.html', {'cart_items': cart.items.all(), 'cart': cart})

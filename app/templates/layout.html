@@ -50,12 +50,18 @@
 
         {% endif %}
       </ul>
-      <ul class="navbar-nav d-flex flex-row ms-auto me-3">
+
+    <ul class="navbar-nav mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link" href="/view_cart">{% bs_icon 'cart-fill' %}</a>
+        </li>
+    </ul>
+
+
+      <ul class="navbar-nav d-flex flex-row me-3">
         {% if user %}
 
-
         <li class="nav-item me-3 me-lg-0 dropdown">
-
           <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown1" role="button" data-mdb-toggle="dropdown"
             aria-expanded="false" data-bs-toggle='dropdown'>
             <img src="{% if user.image %}/media/{{ user.image.name }}{% else %}{% static 'images/user_no_picture.png' %}{% endif %}"
@@ -65,7 +71,7 @@
           <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown1">
 
             <li><a class="dropdown-item" href="/account/profile">My Account</a></li>
-            <li><a class="dropdown-item" href="/account/sell">Sell</a></li>
+
 
             <li><a class="dropdown-item" href="#">Favorites</a></li>
               <li><a class="dropdown-item" href="/account/settings">Settings</a></li>
@@ -91,10 +97,17 @@
 </nav>
 <!-- Navbar -->
 
-{% block content %}
-{% endblock %}
+
+
+
+<div class="container" style="min-height: calc(80vh - 150px);">
+    {% block content %}
+    {% endblock %}
+</div>
+
+
 <!-- Footer -->
-<footer class="bg-dark text-center text-white mt-3">
+<footer class="bg-dark text-center text-white mt-5">
   <!-- Grid container -->
   <div class="container p-4">
     <!-- Section: Social media -->
