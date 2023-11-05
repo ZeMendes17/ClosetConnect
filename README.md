@@ -11,7 +11,7 @@ TODO:
 - [ ] Admin page
 - [ ] See follwing page
 - [ ] Product page (with comments and ratings)
-- [ ] Add product page
+- [x] Add product page
 - [ ] Edit product page
 - [ ] Favorites page
 - [ ] Cart page
