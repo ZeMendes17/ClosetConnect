@@ -100,8 +100,9 @@
                 </div>
                 <form action="." method="post" style="padding-left: 1px;">
                     {% csrf_token %}
+                    <a class="btn btn-success" href="/product/{{ product.id }}">View</a>
                     <input type="hidden" name="deleteProduct" value="{{ product.id }}">
-                    <button type="submit" class="btn btn-danger">Delete</button>
+                    <button type="submit" class="btn btn-danger">{% bs_icon 'trash' %}</button>
                 </form>
             </li>
         {% endfor %}

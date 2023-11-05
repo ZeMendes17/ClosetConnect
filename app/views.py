@@ -264,9 +264,24 @@ def product_page(request, product_id):
             comment.save()
             return redirect('/product/' + str(product_id))
 
+        elif "deleteProduct" in request.POST:
+            product_id = request.POST["deleteProduct"]
+            product = Product.objects.get(id=product_id)
+            product.delete()
+            return redirect('/adminpage/')  # Redirect to the desired page after deletion
 
-from django.shortcuts import render, redirect
-from .models import User, Product
+        elif "deleteComment" in request.POST:
+            comment_id = request.POST["deleteComment"]
+            comment = Comment.objects.get(id=comment_id)
+            comment.delete()
+            return redirect('/product/' + str(product_id))
+
+    return render(request, 'product_page.html')
+
+
+
+
+
 
 def admin_page(request):
     errorUser = False
@@ -288,7 +303,7 @@ def admin_page(request):
                 users = User.objects.filter(username__icontains=q)
                 if users.exists():
                     user = users.first()
-                    products = Product.objects.filter(user_id=user)
+                    products = Product.objects.all()
                     errorUser = False
                 else:
                     users = User.objects.all()
@@ -304,6 +319,7 @@ def admin_page(request):
             if q:
                 products = Product.objects.filter(name__icontains=q)
                 if not products.exists():
+                    products = Product.objects.all()
                     errorProduct = True
                 else:
                     errorProduct = False
