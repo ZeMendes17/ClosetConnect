@@ -1,0 +1,192 @@
+{% extends 'layout.html' %}
+{% load bootstrap_icons %}
+
+{% block title %} Product {% endblock %}
+
+{% block content %}
+    {% load static %}
+    {% block styles %}
+        <link rel="stylesheet" href="{% static 'styles/product.css' %}">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    {% endblock %}
+
+        <!-- content -->
+        <section class="py-5">
+          <div class="container">
+            <div class="row gx-5">
+              <aside class="col-lg-6">
+                <div class="border rounded-4 mb-3 d-flex justify-content-center">
+                    <img style="max-width: 100%; max-height: 100vh; margin: auto;" class="rounded-4 fit" src="/media/{{ product.image }}" />
+                  </a>
+                </div>
+                <!-- thumbs-wrap.// -->
+                <!-- gallery-wrap .end// -->
+              </aside>
+              <main class="col-lg-6">
+                <div class="ps-lg-3">
+                    <div class="product-info">
+                        <h4 class="title text-dark" style="display: inline-block;">
+                            {{ product.name }}
+                        </h4>
+                        <p style="display: inline-block;">by</p>
+                        <a class="link-secondary" href="/seller-profile/{{ seller.username }}" style="display: inline-block; text-decoration: none"> @{{ seller.username }}</a>
+                    </div>
+
+                  <div class="d-flex flex-row my-3">
+                    <div class="text-warning mb-1 me-2">
+                      {% bs_icon 'star-fill' %}
+                      {% bs_icon 'star-fill' %}
+                      {% bs_icon 'star-fill' %}
+                      {% bs_icon 'star-fill' %}
+                      {% bs_icon 'star-half' %}
+                      <span class="ms-1">
+                        4.5
+                      </span>
+                    </div>
+                    <span class="text-muted"><i class="fas fa-shopping-basket fa-sm mx-1"></i>154 orders</span>
+                    <span class="text-success ms-2">In stock</span>
+                  </div>
+
+                  <div class="mb-3">
+                    <span class="h5">{{ product.price }}€</span>
+                  </div>
+
+                  <p>
+                      {{ product.description }}
+                  </p>
+
+                  <div class="row">
+                    <dt class="col-3">Type:</dt>
+                    <dd class="col-9">Regular</dd>
+
+                    <dt class="col-3">Color</dt>
+                    <dd class="col-9">Brown</dd>
+
+                    <dt class="col-3">Material</dt>
+                    <dd class="col-9">Cotton, Jeans</dd>
+
+                    <dt class="col-3">Brand</dt>
+                    <dd class="col-9">Reebook</dd>
+                  </div>
+
+                  <hr />
+
+                  <div style="display: flex;">
+                        <div class="flex-item">
+                            <button class="btn btn-outline-danger">{% bs_icon 'heart' %} Add To Favorites</button>
+                        </div>
+                        <div class="flex-item" style="margin-left: 10px">
+                            <button class="btn btn-success">{% bs_icon 'bag' %} Buy Now</button>
+                        </div>
+                  </div>
+
+
+                </div>
+              </main>
+            </div>
+          </div>
+        </section>
+        <!-- content -->
+
+       <section class="bg-light border-top py-4">
+          <div class="container">
+            <div class="row gx-4">
+              <div class="col-lg-8 mb-4">
+                <div class=" rounded-2 px-3">
+
+
+                            <div class="card shadow-0 border" style="background-color: #f0f2f5;">
+                              <div class="card-body p-4">
+                                <div class="form-outline mb-4">
+                                    <form action="." method="post">
+                                        {% csrf_token %}
+                                        {{ comment_form.comment }}
+                                        <input type="hidden" name="product_id" value="{{ product.id }}">
+                                            <div class="rating">
+                                              <input type="radio" id="star5" name="rating_input" value="5">
+                                              <label for="star5" title="5 stars"></label>
+                                              <input type="radio" id="star4" name="rating_input" value="4">
+                                              <label for="star4" title="4 stars"></label>
+                                              <input type="radio" id="star3" name="rating_input" value="3">
+                                              <label for="star3" title="3 stars"></label>
+                                              <input type="radio" id="star2" name="rating_input" value="2">
+                                              <label for="star2" title="2 stars"></label>
+                                              <input type="radio" id="star1" name="rating_input" value="1">
+                                              <label for="star1" title="1 star"></label>
+                                          </div>
+                                        <div>
+                                            <input style="margin-top: 10px" type="submit" class="btn btn-primary" value="Post Comment">
+                                        </div>
+                                    </form>
+                                </div>
+                                {% for comment in comments %}
+                                    <div class="card mb-4">
+                                      <div class="card-body">
+                                        <p>{{ comment.text }}</p>
+
+                                        <div class="d-flex justify-content-between">
+                                          <div class="d-flex flex-row align-items-center">
+                                            <img src="/media/{{ comment.user_id.image }}" alt="avatar" style="height: 25px; width: 25px; object-fit: cover" />
+                                            <p class="small mb-0 ms-2">{{ comment.user_id.name }}</p>
+                                          </div>
+                                          <div class="d-flex flex-row align-items-center">
+                                            {% if comment.rating == 1 %}
+                                                {% bs_icon 'star-fill' %}
+                                            {% elif comment.rating == 2 %}
+                                                {% bs_icon 'star-fill' %}
+                                                {% bs_icon 'star-fill' %}
+                                            {% elif comment.rating == 3 %}
+                                                {% bs_icon 'star-fill' %}
+                                                {% bs_icon 'star-fill' %}
+                                                {% bs_icon 'star-fill' %}
+                                            {% elif comment.rating == 4 %}
+                                                {% bs_icon 'star-fill' %}
+                                                {% bs_icon 'star-fill' %}
+                                                {% bs_icon 'star-fill' %}
+                                                {% bs_icon 'star-fill' %}
+                                            {% elif comment.rating == 5 %}
+                                                {% bs_icon 'star-fill' %}
+                                                {% bs_icon 'star-fill' %}
+                                                {% bs_icon 'star-fill' %}
+                                                {% bs_icon 'star-fill' %}
+                                                {% bs_icon 'star-fill' %}
+                                            {% endif %}
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                {% endfor %}
+                              </div>
+                            </div>
+                          </div>
+
+
+              </div>
+              <div class="col-lg-4">
+                <div class="px-0 border rounded-2 shadow-0">
+                  <div class="card">
+                    <div class="card-body">
+                      <h5 class="card-title">Other Products by <b>@{{ seller.username }}</b></h5>
+                        {% for other_product in other_products %}
+                          <div class="d-flex mb-3">
+                            <a href="" class="me-3">
+                              <img src="/media/{{ other_product.image }}" style="min-width: 96px; height: 96px;" class="img-md img-thumbnail" />
+                            </a>
+                            <div class="info">
+                              <a href="/product/{{ other_product.id }}" class="nav-link mb-1" style="text-decoration: none; color: #4d5154">
+                                  {{ other_product.name }}
+                              </a>
+                              <strong class="text-dark" style="margin-left: 20px"> {{ other_product.price }}€</strong>
+                            </div>
+                          </div>
+                        {% endfor %}
+
+
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+{% endblock %}

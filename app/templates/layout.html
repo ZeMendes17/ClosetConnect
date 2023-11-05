@@ -51,6 +51,7 @@
         {% endif %}
       </ul>
 
+
     <ul class="navbar-nav mb-2 mb-lg-0">
         <li class="nav-item">
           <a class="nav-link" href="/view_cart">{% bs_icon 'cart-fill' %}</a>
@@ -59,6 +60,15 @@
 
 
       <ul class="navbar-nav d-flex flex-row me-3">
+
+      <ul class="navbar-nav d-flex flex-row ms-auto me-3">
+        {% if user.is_superuser or user.is_staff or user.admin %}
+        <li class="nav-item">
+          <a class="nav-link" href="/adminpage">Admin</a>
+        </li>
+        {% endif %}
+
+
         {% if user %}
 
         <li class="nav-item me-3 me-lg-0 dropdown">

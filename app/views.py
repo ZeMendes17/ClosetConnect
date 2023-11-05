@@ -1,10 +1,15 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login as auth_login
 from django.shortcuts import render, redirect
-from app.forms import RegisterForm, UploadUserProfilePicture, UpdateProfile, UpdatePassword, ProductForm
+from app.forms import RegisterForm, UploadUserProfilePicture, UpdateProfile, UpdatePassword, ProductForm, CommentForm
 
-from app.models import User, Product, Follower, Cart, CartItem
+
+
 from django.shortcuts import get_object_or_404
+
+from app.models import User, Product, Follower, Comment, Cart, CartItem
+
+
 
 # Create your views here.
 
@@ -239,6 +244,7 @@ def product_settings(request, product_id):
 
 
 
+
 @login_required(login_url='/login')
 def add_to_cart(request, product_id):
     try:
@@ -297,3 +303,92 @@ def viewCart(request):
 
 
     return render(request, 'cart.html', {'cart_items': cart.items.all(), 'cart': cart})
+
+def product_page(request, product_id):
+    if request.method == "GET":
+        product = Product.objects.get(id=product_id)
+        seller = User.objects.get(id=product.user_id.id)
+        # get other products from the same seller, max 4
+        other_products = Product.objects.filter(user_id=seller).exclude(id=product_id)[:4]
+        user = User.objects.get(username=request.user.username)
+        # comment form
+        comment_form = CommentForm()
+        # get comments
+        comments = Comment.objects.filter(product_id=product_id)
+        return render(request, 'product_page.html', {'product': product, 'user': user, 'seller': seller, 'other_products': other_products,
+                                                     'comment_form': comment_form, 'comments': comments})
+
+    elif request.method == "POST":
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.cleaned_data['comment']
+            rating = 0
+            if 'rating_input' in request.POST:
+                rating = request.POST['rating_input']
+
+            product = Product.objects.get(id=product_id)
+            user = User.objects.get(username=request.user.username)
+            comment = Comment.objects.create(text=comment, user_id=user, product_id=product, rating=rating)
+            comment.save()
+            return redirect('/product/' + str(product_id))
+
+
+from django.shortcuts import render, redirect
+from .models import User, Product
+
+def admin_page(request):
+    errorUser = False
+    errorProduct = False
+
+    if request.method == "GET":
+        user = User.objects.get(username=request.user.username)
+        if user.admin:
+            users = User.objects.all()
+            products = Product.objects.all()
+            return render(request, 'admin_page.html', {'user': user, 'users': users, 'products': products})
+        else:
+            return redirect('/')
+
+    if request.method == "POST":
+        if "searchUser" in request.POST:
+            q = request.POST['searchUser']
+            if q:
+                users = User.objects.filter(username__icontains=q)
+                if users.exists():
+                    user = users.first()
+                    products = Product.objects.filter(user_id=user)
+                    errorUser = False
+                else:
+                    users = User.objects.all()
+                    products = Product.objects.all()
+                    errorUser = True
+            else:
+                users = User.objects.all()
+                products = Product.objects.all()
+            return render(request, 'admin_page.html', {'users': users, 'products': products, 'errorUser': errorUser, 'errorProduct': errorProduct})
+        elif "searchProduct" in request.POST:
+            q = request.POST['searchProduct']
+            users = User.objects.all()
+            if q:
+                products = Product.objects.filter(name__icontains=q)
+                if not products.exists():
+                    errorProduct = True
+                else:
+                    errorProduct = False
+            else:
+                products = Product.objects.all()
+                errorProduct = False
+            return render(request, 'admin_page.html', {'users': users, 'products': products, 'errorUser': errorUser, 'errorProduct': errorProduct})
+
+        elif "deleteUser" in request.POST:
+            user_id = request.POST['deleteUser']
+            User.objects.filter(id=user_id).delete()
+            Product.objects.filter(user_id=user_id).delete()
+        elif "deleteProduct" in request.POST:
+            product_id = request.POST['deleteProduct']
+            Product.objects.filter(id=product_id).delete()
+
+    users = User.objects.all()
+    products = Product.objects.all()
+    return render(request, 'admin_page.html', {'errorUser': errorUser, 'errorProduct': errorProduct, 'users': users, 'products': products})
+

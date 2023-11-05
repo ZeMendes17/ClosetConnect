@@ -35,4 +35,7 @@ urlpatterns = [
     path("account/product/<int:product_id>/", views.product_settings, name="product"),
     path('add_to_cart/<int:product_id>/', views.add_to_cart, name='add_to_cart'),
     path('view_cart', views.viewCart, name='view_cart'),
+    path("account/product/<int:product_id>/", views.product_settings, name="product_settings"),
+    path("product/<int:product_id>/", views.product_page, name="product_page"),
+    path("adminpage/", views.admin_page, name="admin_page"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
