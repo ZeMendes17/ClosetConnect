@@ -47,6 +47,12 @@
                                     <td>{{ item.quantity }}</td>
                                     <td>{{ item.product.price }}€</td>
                                     <td>{{ item.price }}€</td>
+                                <td>
+                                     <form method="post" action="{% url 'delete_from_cart' item.id %}">
+                                         {% csrf_token %}
+                                         <button type="submit" class="btn btn-danger">x</button>
+                                     </form>
+                                 </td>
 
                                 </tr>
                             {% endfor %}
