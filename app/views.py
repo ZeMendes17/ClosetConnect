@@ -1,9 +1,9 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login as auth_login
 from django.shortcuts import render, redirect
-from app.forms import RegisterForm, UploadUserProfilePicture, UpdateProfile, UpdatePassword, ProductForm
+from app.forms import RegisterForm, UploadUserProfilePicture, UpdateProfile, UpdatePassword, ProductForm, CommentForm
 
-from app.models import User, Product, Follower
+from app.models import User, Product, Follower, Comment
 
 
 # Create your views here.
@@ -234,3 +234,31 @@ def product_settings(request, product_id):
 #                return redirect('/account/profile')
 #            else:
 #                return render(request, 'product_settings.html', {'product': product, 'error': True})
+
+def product_page(request, product_id):
+    if request.method == "GET":
+        product = Product.objects.get(id=product_id)
+        seller = User.objects.get(id=product.user_id.id)
+        # get other products from the same seller, max 4
+        other_products = Product.objects.filter(user_id=seller).exclude(id=product_id)[:4]
+        user = User.objects.get(username=request.user.username)
+        # comment form
+        comment_form = CommentForm()
+        # get comments
+        comments = Comment.objects.filter(product_id=product_id)
+        return render(request, 'product_page.html', {'product': product, 'user': user, 'seller': seller, 'other_products': other_products,
+                                                     'comment_form': comment_form, 'comments': comments})
+
+    elif request.method == "POST":
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.cleaned_data['comment']
+            rating = 0
+            if 'rating_input' in request.POST:
+                rating = request.POST['rating_input']
+
+            product = Product.objects.get(id=product_id)
+            user = User.objects.get(username=request.user.username)
+            comment = Comment.objects.create(text=comment, user_id=user, product_id=product, rating=rating)
+            comment.save()
+            return redirect('/product/' + str(product_id))

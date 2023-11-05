@@ -54,3 +54,10 @@ class ProductForm(forms.ModelForm):
             'image': forms.FileInput(attrs={'class': 'form-control', 'id': 'image', 'name': 'input_file', 'accept': 'image/*'}),
             'price': forms.NumberInput(attrs={'class': 'form-control'}),
         }
+
+class CommentForm(forms.Form):
+    comment = forms.CharField(max_length=100, required=True, widget=forms.Textarea(
+        attrs={'class': 'form-control',
+               'style': 'resize: none; height: 100px;',
+               'placeholder': 'Write a comment...'
+               }))
