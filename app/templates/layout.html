@@ -51,6 +51,12 @@
         {% endif %}
       </ul>
       <ul class="navbar-nav d-flex flex-row ms-auto me-3">
+        {% if user.is_superuser or user.is_staff or user.admin %}
+        <li class="nav-item">
+          <a class="nav-link" href="/adminpage">Admin</a>
+        </li>
+        {% endif %}
+
         {% if user %}
 
 
