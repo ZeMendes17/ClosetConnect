@@ -19,6 +19,8 @@
 <h1 class="text-muted">Home{% bs_icon 'houses-fill' %}</h1>
 
 
+
+
  <div class="row row-cols-1 row-cols-md-3 g-4">
   {% for product in products %}
                     <div class="col-md-4 mt-5">
@@ -43,7 +45,7 @@
                                     <h5>{{ product.price }}€</h5>
                                 </div>
                                 <div class="col-4">
-                                  <a href="/account/product/{{ product.id }}" class="btn btn-info w-100 p-3 rounded-0 text-center">
+                                  <a href="/product/{{ product.id }}" class="btn btn-info w-100 p-3 rounded-0 text-center">
                                     {% bs_icon 'eye' %}
                                     <span class="align-middle">View</span>
                                   </a>

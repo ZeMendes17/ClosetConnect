@@ -34,33 +34,22 @@
                         <thead>
                             <tr>
                                 <th scope="col">Product</th>
-                                <th scope="col">Quantity</th>
-                                <th scope="col">Unit Price</th>
                                 <th scope="col">Price</th>
-
                             </tr>
                         </thead>
                         <tbody>
                             {% for item in cart_items %}
                                 <tr>
                                     <td>{{ item.product.name }}</td>
-                                    <td>{{ item.quantity }}</td>
-                                    <td>{{ item.product.price }}€</td>
                                     <td>{{ item.price }}€</td>
                                 <td>
                                      <form method="post" action="{% url 'delete_from_cart' item.id %}">
                                          {% csrf_token %}
-                                         <button type="submit" class="btn btn-danger">x</button>
+                                         <button type="submit" class="btn btn-danger">{% bs_icon "trash" %}</button>
                                      </form>
                                  </td>
-
                                 </tr>
                             {% endfor %}
-
-
-
-
-
 
 
                         </tbody>

@@ -7,6 +7,7 @@ from app.forms import RegisterForm, UploadUserProfilePicture, UpdateProfile, Upd
 
 from django.shortcuts import get_object_or_404
 from django.views.decorators.http import require_POST
+from django.http import HttpResponse
 from app.models import User, Product, Follower, Comment, Cart, CartItem, Favorite
 
 
@@ -258,24 +259,16 @@ def add_to_cart(request, product_id):
         cart_item, created = CartItem.objects.get_or_create(product=product, user=user)
 
         if not created:
-            cart_item.quantity += 1
+            print("ja existe")
+            pass
+
         else:
-            cart_item.price = product.price
+            cart_item.price = float(product.price)
+            cart.price += float(product.price)
 
-
-        cart_item.price = cart_item.quantity * float(product.price)
-        cart.price += float(product.price)
-
-        print("cart price: ", cart.price)
-        print("cart item price: ", cart_item.price)
-
-        cart_item.save()
-
-
-        cart.items.add(cart_item)
-
-        cart.save()
-
+            cart.items.add(cart_item)
+            cart_item.save()
+            cart.save()
 
         return redirect('/')
 
@@ -305,14 +298,10 @@ def delete_from_cart(request, item_id):
         cart = Cart.objects.get(user=user)
         cart_item = CartItem.objects.get(id=item_id)
 
-        cart.price -= float(cart_item.price)/float(cart_item.quantity)
+        cart.price -= float(cart_item.price)
 
-        if cart_item.quantity > 1:
-            cart_item.quantity -= 1
-            cart_item.price -= float(cart_item.product.price)
-            cart_item.save()
-        else:
-            cart_item.delete()
+
+        cart_item.delete()
 
         cart.save()
 
