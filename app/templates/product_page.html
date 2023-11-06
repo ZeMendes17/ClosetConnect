@@ -29,7 +29,7 @@
                             {{ product.name }}
                         </h4>
                         <p style="display: inline-block;">by</p>
-                        <a class="link-secondary" href="/seller-profile/{{ seller.username }}" style="display: inline-block; text-decoration: none"> @{{ seller.username }}</a>
+                        <a class="link-secondary" href="/profile/{{ seller.username }}" style="display: inline-block; text-decoration: none"> @{{ seller.username }}</a>
                     </div>
 
                   <div class="d-flex flex-row my-3">
@@ -73,7 +73,14 @@
 
                   <div style="display: flex;">
                         <div class="flex-item">
-                            <button class="btn btn-outline-danger">{% bs_icon 'heart' %} Add To Favorites</button>
+                            <form action="." method="post">
+                            {% csrf_token %}
+                                {% if not favorite %}
+                                <button class="btn btn-outline-danger" name="favorite">{% bs_icon 'heart' %} Add To Favorites</button>
+                                {% else %}
+                                <button class="btn btn-danger" name="remove_favorite">{% bs_icon 'heart-fill' %} Remove From Favorites</button>
+                                {% endif %}
+                            </form>
                         </div>
                         <div class="flex-item" style="margin-left: 10px">
                             <button class="btn btn-success">{% bs_icon 'bag' %} Buy Now</button>

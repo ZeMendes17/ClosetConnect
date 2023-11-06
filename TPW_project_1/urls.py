@@ -34,4 +34,5 @@ urlpatterns = [
     path("account/profile/", views.profile, name="profile"),
     path("account/product/<int:product_id>/", views.product_settings, name="product_settings"),
     path("product/<int:product_id>/", views.product_page, name="product_page"),
+    path("profile/<str:username>/", views.seller, name="seller"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

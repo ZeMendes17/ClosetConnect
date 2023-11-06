@@ -17,7 +17,7 @@
                      class="rounded-circle" alt="">
                 <h2 class="cover-heading pt-2">{{ user.name }}</h2>
                 <p class="text-secondary cover-heading mb-5">@{{ user.username }}</p>
-                <p class="lead">Followers <b>{% if followers %}{{ followers|length }}{% else %}0{% endif %}</b> | Following <b>{% if following %}{{ following }}{% else %}0{% endif %}</b></p>
+                <p class="lead">Followers <b>{% if followers %}{{ followers|length }}{% else %}0{% endif %}</b> | Following <b>{% if following %}{{ following|length }}{% else %}0{% endif %}</b></p>
             </div>
             <div class="row">
                 {% for product in products %}

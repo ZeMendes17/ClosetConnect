@@ -1,9 +1,10 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login as auth_login
+from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from app.forms import RegisterForm, UploadUserProfilePicture, UpdateProfile, UpdatePassword, ProductForm, CommentForm
 
-from app.models import User, Product, Follower, Comment
+from app.models import User, Product, Follower, Comment, Favorite
 
 
 # Create your views here.
@@ -247,8 +248,27 @@ def product_page(request, product_id):
         comment_form = CommentForm()
         # get comments
         comments = Comment.objects.filter(product_id=product_id)
+
+        # see if the user has favorited the product
+        favorite = False
+        if Favorite.objects.filter(user_id=user, product_id=product):
+            favorite = True
         return render(request, 'product_page.html', {'product': product, 'user': user, 'seller': seller, 'other_products': other_products,
-                                                     'comment_form': comment_form, 'comments': comments})
+                                                     'comment_form': comment_form, 'comments': comments, 'favorite': favorite})
+
+    elif request.method == "POST" and 'remove_favorite' in request.POST:
+        user = User.objects.get(username=request.user.username)
+        product = Product.objects.get(id=product_id)
+        favorite = Favorite.objects.get(user_id=user, product_id=product)
+        favorite.delete()
+        return redirect('/product/' + str(product_id))
+
+    elif request.method == "POST" and 'favorite' in request.POST:
+        user = User.objects.get(username=request.user.username)
+        product = Product.objects.get(id=product_id)
+        favorite = Favorite.objects.create(user_id=user, product_id=product)
+        favorite.save()
+        return redirect('/product/' + str(product_id))
 
     elif request.method == "POST":
         form = CommentForm(request.POST)
@@ -263,3 +283,61 @@ def product_page(request, product_id):
             comment = Comment.objects.create(text=comment, user_id=user, product_id=product, rating=rating)
             comment.save()
             return redirect('/product/' + str(product_id))
+
+def seller(request, username):
+    if request.method == "GET":
+        if username == request.user.username:
+            return redirect('/account/profile')
+        user = User.objects.get(username=username)
+        # get the followers
+        followers = Follower.objects.filter(followed=user)
+        followers_list = []
+        for follower in followers:
+            followers_list.append(follower.follower)
+
+        # get the following
+        following = Follower.objects.filter(follower=user)
+        following_list = []
+        for followed in following:
+            following_list.append(followed.followed)
+
+        # get user's products
+        products = Product.objects.filter(user_id=user)
+
+        # get favorites
+        favorites = Favorite.objects.filter(user_id=User.objects.get(username=request.user.username))
+        favorites_list = []
+        for favorite in favorites:
+            favorites_list.append(favorite.product_id)
+
+        return render(request, 'seller.html', {'user': User.objects.get(username=request.user.username),'seller': user, 'followers': followers_list,
+                                                'following': following_list, 'products': products, 'favorites': favorites_list})
+
+    elif request.method == "POST" and 'follow' in request.POST:
+        user = User.objects.get(username=username)
+        follower = User.objects.get(username=request.user.username)
+        follow = Follower.objects.create(follower=follower, followed=user)
+        follow.save()
+        return redirect('/profile/' + username)
+
+    elif request.method == "POST" and 'unfollow' in request.POST:
+        user = User.objects.get(username=username)
+        follower = User.objects.get(username=request.user.username)
+        follow = Follower.objects.get(follower=follower, followed=user)
+        follow.delete()
+        return redirect('/profile/' + username)
+
+    elif request.method == "POST" and 'favorite' in request.POST:
+        user = User.objects.get(username=request.user.username)
+        product = Product.objects.get(id=request.POST['favorite'])
+        if Favorite.objects.filter(user_id=user, product_id=product):
+            favorite = Favorite.objects.get(user_id=user, product_id=product)
+            favorite.delete()
+            # this is returning to an ajax call
+            data = {"message": "remove"}
+            return JsonResponse(data)
+        favorite = Favorite.objects.create(user_id=user, product_id=product)
+        favorite.save()
+        # this is returning to an ajax call
+        data = {"message": "add"}
+        return JsonResponse(data)
