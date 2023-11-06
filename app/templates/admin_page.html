@@ -48,14 +48,36 @@
                     </div>
                 </div>
                 <div class="d-flex">
-                    <a class="btn btn-success" href="/account/profile/{{ user.id }}">View</a>
-                    <form action="." method="post" style="padding-left: 1px;">
+                    <a class="btn btn-success" href="/profile/{{ user.username }}">View</a>
+                    <form action="." method="post" style="padding-left: 5px;">
                         {% csrf_token %}
-                        <input type="hidden" name="deleteUser" value="{{ user.id }}">
-                        <button type="submit" class="btn btn-danger">Ban User</button>
+                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteUserModal{{ user.id }}">Ban User</button>
                     </form>
                 </div>
             </li>
+                <!-- Modal for deleting a user -->
+            <div class="modal fade" id="deleteUserModal{{ user.id }}" tabindex="-1" aria-labelledby="deleteUserModalLabel{{ user.id }}" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="deleteUserModalLabel{{ user.id }}">Delete User</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            Are you sure you want to delete this user?
+                            Deleting a user will also delete all of their products.
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                             <form action="." method="post" style="padding-left: 5px;">
+                                {% csrf_token %}
+                                <input type="hidden" name="deleteUser" value="{{ user.id }}">
+                                <button type="submit" class="btn btn-danger">Ban User</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
             {% endif %}
         {% endfor %}
     </ul>
@@ -70,8 +92,14 @@
         <div class="ms-auto">
             <form action="{% url 'admin_page' %}" method="post">
                 {% csrf_token %}
-                <input type="text" id="productSearch" name="searchProduct" placeholder="Search products by name...">
-                 <input type="submit" value="Search">
+                <div class="d-flex gap-2">
+                    <select name="searchOption" class="form-select ps-2">
+                        <option value="product">Search by product name</option>
+                        <option value="username">Search by username</option>
+                    </select>
+                    <input type="text" id="productSearch" name="searchProduct" placeholder="Search..." class="ps-2">
+                    <input type="submit" value="Search" class="ps-2">
+                </div>
             </form>
         </div>
     </div>
@@ -98,13 +126,37 @@
                             <div><strong>Seller: </strong>{{ product.user_id.username }}</div>
                     </div>
                 </div>
-                <form action="." method="post" style="padding-left: 1px;">
-                    {% csrf_token %}
+                <div class="d-flex">
                     <a class="btn btn-success" href="/product/{{ product.id }}">View</a>
-                    <input type="hidden" name="deleteProduct" value="{{ product.id }}">
-                    <button type="submit" class="btn btn-danger">{% bs_icon 'trash' %}</button>
-                </form>
+                    <form action="." method="post" style="padding-left: 5px;">
+                        {% csrf_token %}
+                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteProductModal{{ product.id }}">{% bs_icon 'trash' %}</button>
+                    </form>
+                </div>
             </li>
+            <!-- Modal for deleting a product -->
+            <div class="modal fade" id="deleteProductModal{{ product.id }}" tabindex="-1" aria-labelledby="deleteProductModalLabel{{ product.id }}" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="deleteProductModalLabel{{ product.id }}">Delete Product</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            Are you sure you want to delete this product?
+                            Deleting a product will also delete all of its reviews.
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <form action="." method="post">
+                                {% csrf_token %}
+                                <input type="hidden" name="deleteProduct" value="{{ product.id }}">
+                                <button type="submit" class="btn btn-danger">{% bs_icon 'trash' %}</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
         {% endfor %}
     </ul>
 </div>

@@ -361,17 +361,16 @@ def product_page(request, product_id):
             comment.save()
             return redirect('/product/' + str(product_id))
 
-    elif "deleteProduct" in request.POST:
-        product_id = request.POST["deleteProduct"]
-        product = Product.objects.get(id=product_id)
-        product.delete()
-        return redirect('/adminpage/')  # Redirect to the desired page after deletion
+        elif "deleteProduct" in request.POST:
+            product_id = request.POST['deleteProduct']
+            Product.objects.filter(id=product_id).delete()
+            return redirect('/adminpage/')  # Redirect to the desired page after deletion
 
-    elif "deleteComment" in request.POST:
-        comment_id = request.POST["deleteComment"]
-        comment = Comment.objects.get(id=comment_id)
-        comment.delete()
-        return redirect('/product/' + str(product_id))
+        elif "deleteComment" in request.POST:
+            comment_id = request.POST["deleteComment"]
+            comment = Comment.objects.get(id=comment_id)
+            comment.delete()
+            return redirect('/product/' + str(product_id))
 
     return render(request, 'product_page.html')
 
@@ -466,11 +465,14 @@ def admin_page(request):
                 users = User.objects.all()
                 products = Product.objects.all()
             return render(request, 'admin_page.html', {'users': users, 'products': products, 'errorUser': errorUser, 'errorProduct': errorProduct})
+
         elif "searchProduct" in request.POST:
             q = request.POST['searchProduct']
             users = User.objects.all()
             if q:
-                products = Product.objects.filter(name__icontains=q)
+                products_by_name = Product.objects.filter(name__icontains=q)
+                products_by_user = Product.objects.filter(user_id__username__icontains=q)
+                products = products_by_name.union(products_by_user)
                 if not products.exists():
                     products = Product.objects.all()
                     errorProduct = True
@@ -479,7 +481,8 @@ def admin_page(request):
             else:
                 products = Product.objects.all()
                 errorProduct = False
-            return render(request, 'admin_page.html', {'users': users, 'products': products, 'errorUser': errorUser, 'errorProduct': errorProduct})
+            return render(request, 'admin_page.html',
+                          {'users': users, 'products': products, 'errorUser': errorUser, 'errorProduct': errorProduct})
 
         elif "deleteUser" in request.POST:
             user_id = request.POST['deleteUser']
