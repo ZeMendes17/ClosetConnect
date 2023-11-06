@@ -4,7 +4,10 @@ from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from app.forms import RegisterForm, UploadUserProfilePicture, UpdateProfile, UpdatePassword, ProductForm, CommentForm
 
-from app.models import User, Product, Follower, Comment, Favorite
+
+from django.shortcuts import get_object_or_404
+from django.views.decorators.http import require_POST
+from app.models import User, Product, Follower, Comment, Cart, CartItem, Favorite
 
 
 # Create your views here.
@@ -237,6 +240,91 @@ def product_settings(request, product_id):
 #            else:
 #                return render(request, 'product_settings.html', {'product': product, 'error': True})
 
+
+
+
+
+@login_required(login_url='/login')
+def add_to_cart(request, product_id):
+    try:
+
+        product = get_object_or_404(Product, id=product_id)
+        user = User.objects.get(username=request.user.username)
+
+
+        cart, created = Cart.objects.get_or_create(user=user)
+
+
+        cart_item, created = CartItem.objects.get_or_create(product=product, user=user)
+
+        if not created:
+            cart_item.quantity += 1
+        else:
+            cart_item.price = product.price
+
+
+        cart_item.price = cart_item.quantity * float(product.price)
+        cart.price += float(product.price)
+
+        print("cart price: ", cart.price)
+        print("cart item price: ", cart_item.price)
+
+        cart_item.save()
+
+
+        cart.items.add(cart_item)
+
+        cart.save()
+
+
+        return redirect('/')
+
+    except Product.DoesNotExist:
+
+        return redirect('pagina_de_erro')
+
+
+
+@login_required(login_url='/login')
+def viewCart(request):
+    user = User.objects.get(username=request.user.username)
+    cart, created = Cart.objects.get_or_create(user=user)
+
+
+    return render(request, 'cart.html', {'cart_items': cart.items.all(), 'cart': cart})
+
+
+
+@login_required(login_url='/login')
+@require_POST
+def delete_from_cart(request, item_id):
+    try:
+        user = User.objects.get(username=request.user.username)
+
+
+        cart = Cart.objects.get(user=user)
+        cart_item = CartItem.objects.get(id=item_id)
+
+        cart.price -= float(cart_item.price)/float(cart_item.quantity)
+
+        if cart_item.quantity > 1:
+            cart_item.quantity -= 1
+            cart_item.price -= float(cart_item.product.price)
+            cart_item.save()
+        else:
+            cart_item.delete()
+
+        cart.save()
+
+        return redirect('view_cart')
+
+
+
+    except CartItem.DoesNotExist:
+        return redirect('pagina_de_erro')  # Substitua 'pagina_de_erro' pelo nome da URL da página de erro apropriada
+
+
+
 def product_page(request, product_id):
     if request.method == "GET":
         product = Product.objects.get(id=product_id)
@@ -283,6 +371,21 @@ def product_page(request, product_id):
             comment = Comment.objects.create(text=comment, user_id=user, product_id=product, rating=rating)
             comment.save()
             return redirect('/product/' + str(product_id))
+
+    elif "deleteProduct" in request.POST:
+        product_id = request.POST["deleteProduct"]
+        product = Product.objects.get(id=product_id)
+        product.delete()
+        return redirect('/adminpage/')  # Redirect to the desired page after deletion
+
+    elif "deleteComment" in request.POST:
+        comment_id = request.POST["deleteComment"]
+        comment = Comment.objects.get(id=comment_id)
+        comment.delete()
+        return redirect('/product/' + str(product_id))
+
+    return render(request, 'product_page.html')
+
 
 def seller(request, username):
     if request.method == "GET":
@@ -341,3 +444,64 @@ def seller(request, username):
         # this is returning to an ajax call
         data = {"message": "add"}
         return JsonResponse(data)
+
+
+
+def admin_page(request):
+    errorUser = False
+    errorProduct = False
+
+    if request.method == "GET":
+        user = User.objects.get(username=request.user.username)
+        if user.admin:
+            users = User.objects.all()
+            products = Product.objects.all()
+            return render(request, 'admin_page.html', {'user': user, 'users': users, 'products': products})
+        else:
+            return redirect('/')
+
+    if request.method == "POST":
+        if "searchUser" in request.POST:
+            q = request.POST['searchUser']
+            if q:
+                users = User.objects.filter(username__icontains=q)
+                if users.exists():
+                    user = users.first()
+                    products = Product.objects.all()
+                    errorUser = False
+                else:
+                    users = User.objects.all()
+                    products = Product.objects.all()
+                    errorUser = True
+            else:
+                users = User.objects.all()
+                products = Product.objects.all()
+            return render(request, 'admin_page.html', {'users': users, 'products': products, 'errorUser': errorUser, 'errorProduct': errorProduct})
+        elif "searchProduct" in request.POST:
+            q = request.POST['searchProduct']
+            users = User.objects.all()
+            if q:
+                products = Product.objects.filter(name__icontains=q)
+                if not products.exists():
+                    products = Product.objects.all()
+                    errorProduct = True
+                else:
+                    errorProduct = False
+            else:
+                products = Product.objects.all()
+                errorProduct = False
+            return render(request, 'admin_page.html', {'users': users, 'products': products, 'errorUser': errorUser, 'errorProduct': errorProduct})
+
+        elif "deleteUser" in request.POST:
+            user_id = request.POST['deleteUser']
+            User.objects.filter(id=user_id).delete()
+            Product.objects.filter(user_id=user_id).delete()
+        elif "deleteProduct" in request.POST:
+            product_id = request.POST['deleteProduct']
+            Product.objects.filter(id=product_id).delete()
+
+    users = User.objects.all()
+    products = Product.objects.all()
+    return render(request, 'admin_page.html', {'errorUser': errorUser, 'errorProduct': errorProduct, 'users': users, 'products': products})
+
+

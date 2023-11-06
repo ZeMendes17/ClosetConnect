@@ -16,6 +16,8 @@
 {% load static %}
 
  <div class="container">
+<h1 class="text-muted">Home{% bs_icon 'houses-fill' %}</h1>
+
 
  <div class="row row-cols-1 row-cols-md-3 g-4">
   {% for product in products %}
@@ -47,7 +49,7 @@
                                   </a>
                                 </div>
                                 <div class="col-4">
-                                  <a href="#" class="btn btn-success w-100 p-3 rounded-0 text-center">
+                                  <a href="{% url 'add_to_cart' product.id %}" class="btn btn-success w-100 p-3 rounded-0 text-center">
                                     {% bs_icon 'cart-plus' %}
                                     <span class="align-middle">Buy</span>
                                   </a>

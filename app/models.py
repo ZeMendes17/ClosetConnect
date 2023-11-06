@@ -24,7 +24,7 @@ class Product(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=70)
     description = models.TextField(null=True, blank=True)
-    price = models.DecimalField(max_digits=10, decimal_places=2)
+    price = models.FloatField(max_length=10, default=0.00)
     image = models.ImageField(upload_to='product_images/', null=True, blank=True)
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
     views = models.IntegerField(default=0)
@@ -62,6 +62,7 @@ class Follower(models.Model):
     def __str__(self):
         return self.follower.name + " follows " + self.followed.name
 
+
 class Favorite(models.Model):
     id = models.AutoField(primary_key=True)
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -69,3 +70,26 @@ class Favorite(models.Model):
 
     def __str__(self):
         return self.user_id.name + " likes " + self.product_id.name
+
+
+class CartItem(models.Model):
+    id = models.AutoField(primary_key=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    quantity = models.IntegerField(default=1)
+    price = models.FloatField(max_length=10, default=0.00)
+
+    def __str__(self):
+        return f"{self.product.name} , Quantity: {self.quantity}, Price: {self.price}"
+
+
+class Cart(models.Model):
+    id = models.AutoField(primary_key=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    items = models.ManyToManyField(CartItem)
+    price = models.FloatField(max_length=10, default=0.00)
+
+    def __str__(self):
+        return self.items.all().__str__() + " in Cart " + str(self.id) + " of " + self.user.name
+
+
