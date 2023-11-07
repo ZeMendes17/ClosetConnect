@@ -339,12 +339,18 @@ def product_page(request, product_id):
         # get comments
         comments = Comment.objects.filter(product_id=product_id)
 
+        # get number of followers of the seller
+        followers = Follower.objects.filter(followed=seller)
+        followers_list = []
+        for follower in followers:
+            followers_list.append(follower.follower)
+
         # see if the user has favorited the product
         favorite = False
         if Favorite.objects.filter(user_id=user, product_id=product):
             favorite = True
         return render(request, 'product_page.html', {'product': product, 'user': user, 'seller': seller, 'other_products': other_products,
-                                                     'comment_form': comment_form, 'comments': comments, 'favorite': favorite})
+                                                     'comment_form': comment_form, 'comments': comments, 'favorite': favorite, 'followers': followers_list})
 
     elif request.method == "POST" and 'remove_favorite' in request.POST:
         user = User.objects.get(username=request.user.username)
@@ -358,6 +364,22 @@ def product_page(request, product_id):
         product = Product.objects.get(id=product_id)
         favorite = Favorite.objects.create(user_id=user, product_id=product)
         favorite.save()
+        return redirect('/product/' + str(product_id))
+
+    elif request.method == "POST" and 'follow' in request.POST:
+        user = User.objects.get(username=request.user.username)
+        product = Product.objects.get(id=product_id)
+        seller = User.objects.get(id=product.user_id.id)
+        follow = Follower.objects.create(follower=user, followed=seller)
+        follow.save()
+        return redirect('/product/' + str(product_id))
+
+    elif request.method == "POST" and 'unfollow' in request.POST:
+        user = User.objects.get(username=request.user.username)
+        product = Product.objects.get(id=product_id)
+        seller = User.objects.get(id=product.user_id.id)
+        follow = Follower.objects.get(follower=user, followed=seller)
+        follow.delete()
         return redirect('/product/' + str(product_id))
 
     elif request.method == "POST":
@@ -414,8 +436,12 @@ def seller(request, username):
         for favorite in favorites:
             favorites_list.append(favorite.product_id)
 
+        # comment form
+        comment_form = CommentForm()
+
+
         return render(request, 'seller.html', {'user': User.objects.get(username=request.user.username),'seller': user, 'followers': followers_list,
-                                                'following': following_list, 'products': products, 'favorites': favorites_list})
+                                                'following': following_list, 'products': products, 'favorites': favorites_list, 'comment_form': comment_form})
 
     elif request.method == "POST" and 'follow' in request.POST:
         user = User.objects.get(username=username)
@@ -511,8 +537,37 @@ def admin_page(request):
 
 
 @login_required(login_url='/login')
+def edit_product(request, product_id):
+    # if the user is not the owner of the product, redirect to the product page
+    product = Product.objects.get(id=product_id)
+    if request.user.username != product.user_id.username:
+        return redirect('/product/' + str(product_id))
+
+    if request.method == "GET":
+        form = ProductForm(initial={'name': product.name, 'description': product.description, 'price': product.price})
+        return render(request, 'edit_product.html', {'form': form, 'product': product})
+
+    elif request.method == 'POST':
+        form = ProductForm(request.POST, request.FILES)
+        if form.is_valid():
+            product.name = form.cleaned_data['name']
+            product.description = form.cleaned_data['description']
+            product.price = form.cleaned_data['price']
+
+            # Agora, associe a imagem ao produto
+            if 'image' in request.FILES:
+                product.image = request.FILES[
+                    'image']
+
+            product.save()
+            return redirect('/account/product/' + str(product_id))
+        else:
+            return render(request, 'edit_product.html', {'form': form, 'product': product, 'error': True})
+
+
 def process_payment(request):
     user = User.objects.get(username=request.user.username)
     cart, created = Cart.objects.get_or_create(user=user)
 
     return render(request, 'process_payment.html', {'cart_items': cart.items.all(), 'cart': cart, 'user': user})
+
