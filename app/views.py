@@ -333,7 +333,9 @@ def product_page(request, product_id):
         seller = User.objects.get(id=product.user_id.id)
         # get other products from the same seller, max 4
         other_products = Product.objects.filter(user_id=seller).exclude(id=product_id)[:4]
-        user = User.objects.get(username=request.user.username)
+        # check if the user is logged in
+        if User.objects.filter(username=request.user.username).exists():
+            user = User.objects.get(username=request.user.username)
         # comment form
         comment_form = CommentForm()
         # get comments
@@ -347,9 +349,15 @@ def product_page(request, product_id):
 
         # see if the user has favorited the product
         favorite = False
-        if Favorite.objects.filter(user_id=user, product_id=product):
-            favorite = True
-        return render(request, 'product_page.html', {'product': product, 'user': user, 'seller': seller, 'other_products': other_products,
+        if User.objects.filter(username=request.user.username).exists():
+            if Favorite.objects.filter(user_id=user, product_id=product):
+                favorite = True
+
+        if User.objects.filter(username=request.user.username).exists():
+            return render(request, 'product_page.html', {'product': product, 'user': user, 'seller': seller, 'other_products': other_products,
+                                                     'comment_form': comment_form, 'comments': comments, 'favorite': favorite, 'followers': followers_list})
+
+        return render(request, 'product_page.html', {'product': product, 'user': None, 'seller': seller, 'other_products': other_products,
                                                      'comment_form': comment_form, 'comments': comments, 'favorite': favorite, 'followers': followers_list})
 
     elif request.method == "POST" and 'remove_favorite' in request.POST:
