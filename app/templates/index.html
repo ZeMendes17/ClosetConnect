@@ -45,16 +45,23 @@
                                     <h5>{{ product.price }}€</h5>
                                 </div>
                                 <div class="col-4">
-                                  <a href="/product/{{ product.id }}" class="btn btn-info w-100 p-3 rounded-0 text-center">
-                                    {% bs_icon 'eye' %}
-                                    <span class="align-middle">View</span>
-                                  </a>
+                                      <a href="/product/{{ product.id }}" class="btn btn-info w-100 p-3 rounded-0 text-center">
+                                        {% bs_icon 'eye' %}
+                                        <span class="align-middle">View</span>
+                                      </a>
                                 </div>
                                 <div class="col-4">
+                                    {% if user %}
                                   <a href="{% url 'add_to_cart' product.id %}" class="btn btn-success w-100 p-3 rounded-0 text-center">
                                     {% bs_icon 'cart-plus' %}
                                     <span class="align-middle">Buy</span>
                                   </a>
+                                    {% else %}
+                                        <a href="/login" class="btn btn-success w-100 p-3 rounded-0 text-center">
+                                            {% bs_icon 'cart-plus' %}
+                                            <span class="align-middle">Buy</span>
+                                        </a>
+                                    {% endif %}
                                 </div>
                             </div>
                         </div>
