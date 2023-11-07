@@ -497,3 +497,9 @@ def admin_page(request):
     return render(request, 'admin_page.html', {'errorUser': errorUser, 'errorProduct': errorProduct, 'users': users, 'products': products})
 
 
+@login_required(login_url='/login')
+def process_payment(request):
+    user = User.objects.get(username=request.user.username)
+    cart, created = Cart.objects.get_or_create(user=user)
+
+    return render(request, 'process_payment.html', {'cart_items': cart.items.all(), 'cart': cart, 'user': user})
