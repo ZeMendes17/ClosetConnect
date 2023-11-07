@@ -337,7 +337,7 @@ def product_page(request, product_id):
         # comment form
         comment_form = CommentForm()
         # get comments
-        comments = Comment.objects.filter(product_id=product_id)
+        comments = Comment.objects.filter(user_id=user, seller_id=seller)
 
         # get number of followers of the seller
         followers = Follower.objects.filter(followed=seller)
