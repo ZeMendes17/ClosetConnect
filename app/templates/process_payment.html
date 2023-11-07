@@ -18,36 +18,36 @@
           <div class="container">
             <div class="row gx-5">
               <aside class="col-lg-6">
-    <div class="mb-4">
-        <h3 class="text-muted">Personal Info</h3>
-        <div class="border rounded p-3">
-            <form method="post" action="">
-                {% csrf_token %}
-                <div class="mb-3">
-                    <label for="name" class="form-label">Name</label>
-                    <input type="text" class="form-control" id="name" name="name" value="{{ user.name }}">
+                <div class="mb-4">
+                    <h3 class="text-muted">Personal Info</h3>
+                    <div class="border rounded p-3" style="background-color: #f5f5f5;">
+                        <form method="post" action="">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <label for="name" class="form-label">Name</label>
+                                <input type="text" class="form-control" id="name" name="name" value="{{ user.name }}">
+                            </div>
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="email" name="email" value="{{ user.email }}">
+                            </div>
+                            <div class="mb-3">
+                                <label for="address" class="form-label">Address</label>
+                                <input type="text" class="form-control" id="address" name="address">
+                            </div>
+                            <div class="mb-3">
+                                <label for="new_phone" class="form-label">Phone</label>
+                                <input type="tel" class="form-control" id="new_phone" name="new_phone">
+                            </div>
+                            <div class="mb-3">
+                                <label for="new_phone" class="form-label">Observations</label>
+                                <input type="tel" class="form-control" id="obs" name="obs">
+                            </div>
+                            <button type="submit" class="btn btn-success">Confirm</button>
+                        </form>
+                    </div>
                 </div>
-                <div class="mb-3">
-                    <label for="email" class="form-label">Email</label>
-                    <input type="email" class="form-control" id="email" name="email" value="{{ user.email }}">
-                </div>
-                <div class="mb-3">
-                    <label for="address" class="form-label">Address</label>
-                    <input type="text" class="form-control" id="address" name="address">
-                </div>
-                <div class="mb-3">
-                    <label for="new_phone" class="form-label">Phone</label>
-                    <input type="tel" class="form-control" id="new_phone" name="new_phone">
-                </div>
-                <div class="mb-3">
-                    <label for="new_phone" class="form-label">Observations</label>
-                    <input type="tel" class="form-control" id="obs" name="obs">
-                </div>
-                <button type="submit" class="btn btn-success">Confirm</button>
-            </form>
-        </div>
-    </div>
-</aside>
+              </aside>
 
 
               <main class="col-lg-6">
@@ -56,7 +56,7 @@
                     <h3 class="text-muted">Order Review</h3>
 
                    {% for item in cart_items %}
-                         <div class="card mb-3 border border-3 border-success rounded">
+                         <div class="card mb-3 border border-2 border-success rounded" >
                              <div class="row g-0">
                                  <div class="col-md-4">
                                      <div>
@@ -74,27 +74,17 @@
                          </div>
                    {% endfor %}
 
-
-               <div class="card mb-3 rounded">
-    <div class="row g-0">
-        <div class="col-md-8">
-            <div class="card-body">
-                <h5 class="card-title">Cart Summary</h5>
-                <p class="card-text">Total Items: {{ cart_items.count }}</p>
-                <p class="card-text">Total to Pay: ${{ cart.price }}</p>
-
-            </div>
-        </div>
-    </div>
-</div>
-
-
-
-
-
-
-
-
+                <h5 class="text-muted">Resume</h5>
+               <div class="card mb-3 rounded"  style="background-color: #f5f5f5;">
+                   <div class="row g-0">
+                       <div class="col-md-8">
+                           <div class="card-body">
+                               <p class="card-text">Total Items: {{ cart_items.count }}</p>
+                               <p class="card-text">Total to Pay: ${{ cart.price }}</p>
+                           </div>
+                       </div>
+                   </div>
+               </div>
 
 
                 </div>

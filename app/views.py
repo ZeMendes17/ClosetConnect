@@ -9,7 +9,7 @@ from django.shortcuts import get_object_or_404
 from django.views.decorators.http import require_POST
 from django.http import HttpResponse
 from app.models import User, Product, Follower, Comment, Cart, CartItem, Favorite
-
+from django.db.models import Q
 
 # Create your views here.
 
@@ -19,7 +19,20 @@ def index(request):
     try:
         user = User.objects.get(username=request.user.username)
         ls = Product.objects.exclude(user_id=user)
-        return render(request, 'index.html', {'user': user, 'products': ls})
+        followers = Follower.objects.filter(follower=user)
+
+        FollowersId = [follower.followed for follower in followers]
+        filtredProducts = Product.objects.filter(Q(user_id__in=FollowersId))
+
+
+
+        excluded_ids = [follower.followed.id for follower in followers]
+        OthersProducts = Product.objects.exclude(Q(user_id__in=excluded_ids))
+
+
+
+
+        return render(request, 'index.html', {'user': user, 'products': OthersProducts, 'filtredProducts': filtredProducts})
     except User.DoesNotExist:
         return render(request, 'index.html', {'user': None, 'products': ls})
 
