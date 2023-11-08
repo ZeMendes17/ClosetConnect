@@ -27,6 +27,8 @@ def index(request):
 
 
         excluded_ids = [follower.followed.id for follower in followers]
+        excluded_ids.append(user.id) # exclude the actual user products
+        print(excluded_ids)
         OthersProducts = Product.objects.exclude(Q(user_id__in=excluded_ids))
 
 
