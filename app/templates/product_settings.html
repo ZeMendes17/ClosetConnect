@@ -25,20 +25,6 @@
                   <h4 class="title text-dark">
                       {{ product.name }}
                   </h4>
-                  <div class="d-flex flex-row my-3">
-                    <div class="text-warning mb-1 me-2">
-                      {% bs_icon 'star-fill' %}
-                      {% bs_icon 'star-fill' %}
-                      {% bs_icon 'star-fill' %}
-                      {% bs_icon 'star-fill' %}
-                      {% bs_icon 'star-half' %}
-                      <span class="ms-1">
-                        4.5
-                      </span>
-                    </div>
-                    <span class="text-muted"><i class="fas fa-shopping-basket fa-sm mx-1"></i>154 orders</span>
-                    <span class="text-success ms-2">In stock</span>
-                  </div>
 
                   <div class="mb-3">
                     <span class="h5">{{ product.price }}€</span>
@@ -49,17 +35,14 @@
                   </p>
 
                   <div class="row">
-                    <dt class="col-3">Type:</dt>
-                    <dd class="col-9">Regular</dd>
+                    <dt class="col-3">Brand:</dt>
+                    <dd class="col-9">{{ product.brand }}</dd>
 
                     <dt class="col-3">Color</dt>
-                    <dd class="col-9">Brown</dd>
+                    <dd class="col-9">{{ product.color }}</dd>
 
-                    <dt class="col-3">Material</dt>
-                    <dd class="col-9">Cotton, Jeans</dd>
-
-                    <dt class="col-3">Brand</dt>
-                    <dd class="col-9">Reebook</dd>
+                    <dt class="col-3">Category</dt>
+                    <dd class="col-9">{{ product.category }}</dd>
                   </div>
 
                   <hr />
@@ -67,13 +50,8 @@
                   <div class="row mb-4">
                       <h5><b>Product Statistics:</b></h5>
                         <div class="col-6 mt-3">
-                            <p><b>Number of views:</b> {{ product.views }}</p>
+                            <p><b>Number of views:</b> {{ product.seen }}</p>
                             <p><b>Favorites:</b> {{ favorites }} </p>
-                            <p><b>Number of purchases:</b> {{ purchases }}</p>
-                            <p><b>Number of reviews:</b> {{ reviews }}</p>
-                            {% if review_num > 0 %}
-                                <p><b>Average rating:</b> {{ avg_rating }}</p>
-                            {% endif %}
                         </div>
                   </div>
                   <a href="/account/product/edit/{{ product.id }}/" class="btn btn-secondary shadow-0"> {% bs_icon 'pencil' %} Edit Product </a>

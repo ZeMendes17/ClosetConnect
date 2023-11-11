@@ -230,13 +230,9 @@ def product_settings(request, product_id):
     if request.method == "GET":
         user = User.objects.get(username=request.user.username)
         product = Product.objects.get(id=product_id)
-        purchases = 0
-        favorites = 0
-        reviews = 0
-        avg_rating = 0
-        return render(request, 'product_settings.html', {'product': product, 'user': user,
-                                                         'purchases': purchases, 'favorites': favorites,
-                                                         'reviews': reviews, 'avg_rating': avg_rating})
+        favorites = Favorite.objects.filter(product_id=product).count()
+
+        return render(request, 'product_settings.html', {'product': product, 'user': user, 'favorites': favorites})
 
 #    elif request.method == "POST":
 #        product = Product.objects.get(id=product_id)
@@ -336,12 +332,10 @@ def product_page(request, product_id):
         # get other products from the same seller, max 4
         other_products = Product.objects.filter(user_id=seller).exclude(id=product_id)[:4]
         # check if the user is logged in
-        if User.objects.filter(username=request.user.username).exists():
-            user = User.objects.get(username=request.user.username)
+        #if User.objects.filter(username=request.user.username).exists():
+        user = User.objects.get(username=request.user.username)
         # comment form
         comment_form = CommentForm()
-        # get comments
-        comments = Comment.objects.filter(user_id=user, seller_id=seller)
 
         # get number of followers of the seller
         followers = Follower.objects.filter(followed=seller)
@@ -355,12 +349,25 @@ def product_page(request, product_id):
             if Favorite.objects.filter(user_id=user, product_id=product):
                 favorite = True
 
+        # update the seen counter
+        product.seen += 1
+        product.save()
+
+        ratings = Comment.objects.filter(seller_id=seller)
+        rating = 0
+        for r in ratings:
+            rating += r.rating
+        if ratings.count() > 0:
+            rating = rating / ratings.count()
+            rating = round(rating, 1)
+
+
         if User.objects.filter(username=request.user.username).exists():
             return render(request, 'product_page.html', {'product': product, 'user': user, 'seller': seller, 'other_products': other_products,
-                                                     'comment_form': comment_form, 'comments': comments, 'favorite': favorite, 'followers': followers_list})
+                                                     'favorite': favorite, 'followers': followers_list, 'comment_form': comment_form, 'rating': rating})
 
         return render(request, 'product_page.html', {'product': product, 'user': None, 'seller': seller, 'other_products': other_products,
-                                                     'comment_form': comment_form, 'comments': comments, 'favorite': favorite, 'followers': followers_list})
+                                                     'favorite': favorite, 'followers': followers_list, 'comment_form': comment_form, 'rating': rating})
 
     elif request.method == "POST" and 'remove_favorite' in request.POST:
         user = User.objects.get(username=request.user.username)
@@ -449,9 +456,13 @@ def seller(request, username):
         # comment form
         comment_form = CommentForm()
 
+        # get comments
+        comments = Comment.objects.filter(user_id=User.objects.get(username=request.user.username), seller_id=user).order_by('-id')[:10]
+
 
         return render(request, 'seller.html', {'user': User.objects.get(username=request.user.username),'seller': user, 'followers': followers_list,
-                                                'following': following_list, 'products': products, 'favorites': favorites_list, 'comment_form': comment_form})
+                                                'following': following_list, 'products': products, 'favorites': favorites_list, 'comment_form': comment_form,
+                                                'comments': comments})
 
     elif request.method == "POST" and 'follow' in request.POST:
         user = User.objects.get(username=username)
@@ -481,6 +492,20 @@ def seller(request, username):
         # this is returning to an ajax call
         data = {"message": "add"}
         return JsonResponse(data)
+
+    elif request.method == "POST":
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.cleaned_data['comment']
+            rating = 0
+            if 'rating_input' in request.POST:
+                rating = request.POST['rating_input']
+
+            user = User.objects.get(username=request.user.username)
+            seller = User.objects.get(username=username)
+            comment = Comment.objects.create(text=comment, user_id=user, seller_id=seller, rating=rating)
+            comment.save()
+            return redirect('/profile/' + username)
 
 
 
