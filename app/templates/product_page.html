@@ -80,7 +80,11 @@
                         </div>
                         <div class="flex-item" style="margin-left: 10px">
                             {% if user %}
-                            <button class="btn btn-success">{% bs_icon 'bag' %} Buy Now</button>
+                                <a href="{% url 'add_to_cart' product.id %}" class="btn btn-success text-center">
+                                    {% bs_icon 'bag' %}
+                                    <span class="align-middle">Buy Now</span>
+                                </a>
+
                             {% else %}
                             <a href="/login" class="btn btn-success">{% bs_icon 'bag' %} Buy Now</a>
                             {% endif %}

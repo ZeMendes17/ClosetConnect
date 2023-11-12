@@ -61,3 +61,10 @@ class CommentForm(forms.Form):
                'style': 'resize: none; height: 100px;',
                'placeholder': 'Write a comment...'
                }))
+
+class ConfirmOrderForm(forms.Form):
+    Name = forms.CharField(max_length=100, required=True, )
+    Email = forms.EmailField(required=True)
+    Address = forms.CharField(max_length=255, required=True)
+    Phone = forms.CharField(max_length=15, required=True)
+    Observation = forms.CharField(widget=forms.Textarea, required=False)

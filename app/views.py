@@ -2,14 +2,15 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login as auth_login
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
-from app.forms import RegisterForm, UploadUserProfilePicture, UpdateProfile, UpdatePassword, ProductForm, CommentForm
-
+from app.forms import RegisterForm, UploadUserProfilePicture, UpdateProfile, UpdatePassword, ProductForm, CommentForm, \
+    ConfirmOrderForm
 
 from django.shortcuts import get_object_or_404
 from django.views.decorators.http import require_POST
 from django.http import HttpResponse
 from app.models import User, Product, Follower, Comment, Cart, CartItem, Favorite
 from django.db.models import Q
+
 
 # Create your views here.
 
@@ -24,19 +25,13 @@ def index(request):
         FollowersId = [follower.followed for follower in followers]
         filtredProducts = Product.objects.filter(Q(user_id__in=FollowersId))
 
-
-
         excluded_ids = [follower.followed.id for follower in followers]
-        excluded_ids.append(user.id) # exclude the actual user products
-        print(excluded_ids)
+        excluded_ids.append(user.id)  # exclude the actual user products
         OthersProducts = Product.objects.exclude(Q(user_id__in=excluded_ids))
-
-
-
-
-        return render(request, 'index.html', {'user': user, 'products': OthersProducts, 'filtredProducts': filtredProducts})
+        return render(request, 'index.html',
+                      {'user': user, 'products': OthersProducts, 'filtredProducts': filtredProducts})
     except User.DoesNotExist:
-        return render(request, 'index.html', {'user': None, 'products': ls})
+        return render(request, 'index.html', {'user': None, 'products': ls, 'filtredProducts': None})
 
 
 def register(request):
@@ -168,7 +163,6 @@ def profile_settings(request):
         return redirect('/login')
 
 
-
 @login_required(login_url='/login')
 def sell(request):
     if request.method == 'POST':
@@ -176,7 +170,6 @@ def sell(request):
         if form.is_valid():
             product = form.save(commit=False)
             product.user_id = User.objects.get(username=request.user.username)
-
 
             # Agora, associe a imagem ao produto
             if 'image' in request.FILES:
@@ -190,7 +183,6 @@ def sell(request):
         form = ProductForm()
 
     return render(request, 'Sell.html', {'form': form})
-
 
 
 @login_required(login_url='/login')
@@ -234,6 +226,7 @@ def product_settings(request, product_id):
 
         return render(request, 'product_settings.html', {'product': product, 'user': user, 'favorites': favorites})
 
+
 #    elif request.method == "POST":
 #        product = Product.objects.get(id=product_id)
 #        if 'delete' in request.POST:
@@ -253,9 +246,6 @@ def product_settings(request, product_id):
 #                return render(request, 'product_settings.html', {'product': product, 'error': True})
 
 
-
-
-
 @login_required(login_url='/login')
 def add_to_cart(request, product_id):
     try:
@@ -263,9 +253,7 @@ def add_to_cart(request, product_id):
         product = get_object_or_404(Product, id=product_id)
         user = User.objects.get(username=request.user.username)
 
-
         cart, created = Cart.objects.get_or_create(user=user)
-
 
         cart_item, created = CartItem.objects.get_or_create(product=product, user=user)
 
@@ -274,8 +262,8 @@ def add_to_cart(request, product_id):
             pass
 
         else:
-            cart_item.price = float(product.price)
-            cart.price += float(product.price)
+            cart_item.price = product.price
+            cart.price += product.price
 
             cart.items.add(cart_item)
             cart_item.save()
@@ -288,15 +276,14 @@ def add_to_cart(request, product_id):
         return redirect('pagina_de_erro')
 
 
-
 @login_required(login_url='/login')
 def viewCart(request):
     user = User.objects.get(username=request.user.username)
     cart, created = Cart.objects.get_or_create(user=user)
 
+    price = round(cart.price,2)
 
-    return render(request, 'cart.html', {'cart_items': cart.items.all(), 'cart': cart})
-
+    return render(request, 'cart.html', {'cart_items': cart.items.all(), 'cart': cart, 'price': price})
 
 
 @login_required(login_url='/login')
@@ -305,12 +292,10 @@ def delete_from_cart(request, item_id):
     try:
         user = User.objects.get(username=request.user.username)
 
-
         cart = Cart.objects.get(user=user)
         cart_item = CartItem.objects.get(id=item_id)
 
-        cart.price -= float(cart_item.price)
-
+        cart.price -= cart_item.price
 
         cart_item.delete()
 
@@ -324,7 +309,6 @@ def delete_from_cart(request, item_id):
         return redirect('pagina_de_erro')  # Substitua 'pagina_de_erro' pelo nome da URL da página de erro apropriada
 
 
-
 def product_page(request, product_id):
     if request.method == "GET":
         product = Product.objects.get(id=product_id)
@@ -332,7 +316,7 @@ def product_page(request, product_id):
         # get other products from the same seller, max 4
         other_products = Product.objects.filter(user_id=seller).exclude(id=product_id)[:4]
         # check if the user is logged in
-        #if User.objects.filter(username=request.user.username).exists():
+        # if User.objects.filter(username=request.user.username).exists():
         user = User.objects.get(username=request.user.username)
         # comment form
         comment_form = CommentForm()
@@ -361,13 +345,16 @@ def product_page(request, product_id):
             rating = rating / ratings.count()
             rating = round(rating, 1)
 
-
         if User.objects.filter(username=request.user.username).exists():
-            return render(request, 'product_page.html', {'product': product, 'user': user, 'seller': seller, 'other_products': other_products,
-                                                     'favorite': favorite, 'followers': followers_list, 'comment_form': comment_form, 'rating': rating})
+            return render(request, 'product_page.html',
+                          {'product': product, 'user': user, 'seller': seller, 'other_products': other_products,
+                           'favorite': favorite, 'followers': followers_list, 'comment_form': comment_form,
+                           'rating': rating})
 
-        return render(request, 'product_page.html', {'product': product, 'user': None, 'seller': seller, 'other_products': other_products,
-                                                     'favorite': favorite, 'followers': followers_list, 'comment_form': comment_form, 'rating': rating})
+        return render(request, 'product_page.html',
+                      {'product': product, 'user': None, 'seller': seller, 'other_products': other_products,
+                       'favorite': favorite, 'followers': followers_list, 'comment_form': comment_form,
+                       'rating': rating})
 
     elif request.method == "POST" and 'remove_favorite' in request.POST:
         user = User.objects.get(username=request.user.username)
@@ -457,12 +444,14 @@ def seller(request, username):
         comment_form = CommentForm()
 
         # get comments
-        comments = Comment.objects.filter(user_id=User.objects.get(username=request.user.username), seller_id=user).order_by('-id')[:10]
+        comments = Comment.objects.filter(user_id=User.objects.get(username=request.user.username),
+                                          seller_id=user).order_by('-id')[:10]
 
-
-        return render(request, 'seller.html', {'user': User.objects.get(username=request.user.username),'seller': user, 'followers': followers_list,
-                                                'following': following_list, 'products': products, 'favorites': favorites_list, 'comment_form': comment_form,
-                                                'comments': comments})
+        return render(request, 'seller.html', {'user': User.objects.get(username=request.user.username), 'seller': user,
+                                               'followers': followers_list,
+                                               'following': following_list, 'products': products,
+                                               'favorites': favorites_list, 'comment_form': comment_form,
+                                               'comments': comments})
 
     elif request.method == "POST" and 'follow' in request.POST:
         user = User.objects.get(username=username)
@@ -508,7 +497,6 @@ def seller(request, username):
             return redirect('/profile/' + username)
 
 
-
 def admin_page(request):
     errorUser = False
     errorProduct = False
@@ -538,7 +526,8 @@ def admin_page(request):
             else:
                 users = User.objects.all()
                 products = Product.objects.all()
-            return render(request, 'admin_page.html', {'users': users, 'products': products, 'errorUser': errorUser, 'errorProduct': errorProduct})
+            return render(request, 'admin_page.html',
+                          {'users': users, 'products': products, 'errorUser': errorUser, 'errorProduct': errorProduct})
 
         elif "searchProduct" in request.POST:
             q = request.POST['searchProduct']
@@ -568,7 +557,8 @@ def admin_page(request):
 
     users = User.objects.all()
     products = Product.objects.all()
-    return render(request, 'admin_page.html', {'errorUser': errorUser, 'errorProduct': errorProduct, 'users': users, 'products': products})
+    return render(request, 'admin_page.html',
+                  {'errorUser': errorUser, 'errorProduct': errorProduct, 'users': users, 'products': products})
 
 
 @login_required(login_url='/login')
@@ -603,6 +593,16 @@ def edit_product(request, product_id):
 def process_payment(request):
     user = User.objects.get(username=request.user.username)
     cart, created = Cart.objects.get_or_create(user=user)
+    price = round(cart.price, 2)
+    if request.method == 'POST':
+        form = ConfirmOrderForm(request.POST)
+        if form.is_valid():
+            cart.items.all().delete()
+            cart.price = 0
+            cart.save()
+            return redirect('index')
+    else:
+        form = ConfirmOrderForm()
 
-    return render(request, 'process_payment.html', {'cart_items': cart.items.all(), 'cart': cart, 'user': user})
-
+    return render(request, 'process_payment.html',
+                  {'cart_items': cart.items.all(), 'cart': cart, 'user': user, 'form': form, 'price': price})
