@@ -315,9 +315,10 @@ def product_page(request, product_id):
         seller = User.objects.get(id=product.user_id.id)
         # get other products from the same seller, max 4
         other_products = Product.objects.filter(user_id=seller).exclude(id=product_id)[:4]
+
         # check if the user is logged in
-        # if User.objects.filter(username=request.user.username).exists():
-        user = User.objects.get(username=request.user.username)
+        if User.objects.filter(username=request.user.username).exists():
+            user = User.objects.get(username=request.user.username)
         # comment form
         comment_form = CommentForm()
 
@@ -606,3 +607,25 @@ def process_payment(request):
 
     return render(request, 'process_payment.html',
                   {'cart_items': cart.items.all(), 'cart': cart, 'user': user, 'form': form, 'price': price})
+
+
+@login_required(login_url='/login')
+def favorites(request):
+    # Get the user
+    user = request.user
+
+    # Get the user ID
+    user = User.objects.get(username=user.username)
+
+    # Get the favorites for the user
+    favorites = Favorite.objects.filter(user_id=user)
+
+    # Get the product IDs from the favorites
+    favorites_product_ids = [favorite.product_id.id for favorite in favorites]
+
+    # Get the products that match the IDs
+    favorites_products = Product.objects.filter(id__in=favorites_product_ids)
+
+
+    return render(request, 'favorites.html',
+                  {'favorites': favorites_products})

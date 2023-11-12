@@ -42,6 +42,7 @@ urlpatterns = [
     path("adminpage/", views.admin_page, name="admin_page"),
     path("account/product/edit/<int:product_id>/", views.edit_product, name="edit_product"),
     path("process_payment/", views.process_payment, name="process_payment"),
+    path("account/favorites/", views.favorites, name="favorites"),
 
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
