@@ -99,7 +99,7 @@
                                         <div class="card-body">
                                             <div class="d-flex justify-content-between">
                                                 <p>{{ comment.text }}</p>
-                                                {% if user.admin %}
+                                                {% if user.admin or user == seller or user == comment.user_id%}
                                                     <form action="." method="post" style="padding-left: 1px;">
                                                         {% csrf_token %}
                                                         <input type="hidden" name="deleteComment" value="{{ comment.id }}">
