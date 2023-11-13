@@ -10,6 +10,8 @@ from django.views.decorators.http import require_POST
 from django.http import HttpResponse
 from app.models import User, Product, Follower, Comment, Cart, CartItem, Favorite
 from django.db.models import Q
+from django.http import HttpResponseRedirect
+from django.urls import reverse
 
 
 # Create your views here.
@@ -28,8 +30,11 @@ def index(request):
         excluded_ids = [follower.followed.id for follower in followers]
         excluded_ids.append(user.id)  # exclude the actual user products
         OthersProducts = Product.objects.exclude(Q(user_id__in=excluded_ids))
+
+        show_modal = request.session.pop('show_modal', False)
+
         return render(request, 'index.html',
-                      {'user': user, 'products': OthersProducts, 'filtredProducts': filtredProducts})
+                      {'user': user, 'products': OthersProducts, 'filtredProducts': filtredProducts, 'show_modal': show_modal})
     except User.DoesNotExist:
         return render(request, 'index.html', {'user': None, 'products': ls, 'filtredProducts': None})
 
@@ -68,9 +73,6 @@ def register(request):
         form = RegisterForm()
         return render(request, 'register.html', {'form': form, 'error': False})
 
-
-def explore(request):
-    return render(request, 'explore.html')
 
 
 @login_required(login_url='/login')
@@ -258,7 +260,6 @@ def add_to_cart(request, product_id):
         cart_item, created = CartItem.objects.get_or_create(product=product, user=user)
 
         if not created:
-            print("ja existe")
             pass
 
         else:
@@ -614,7 +615,9 @@ def process_payment(request):
             cart.items.all().delete()
             cart.price = 0
             cart.save()
-            return redirect('index')
+            request.session['show_modal'] = True
+
+            return HttpResponseRedirect(reverse('index'))
     else:
         form = ConfirmOrderForm()
 

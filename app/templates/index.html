@@ -15,9 +15,9 @@
 
 {% load static %}
 
+
  <div class="container">
 
-     {{ success }}
 
  <h1 class="text-muted">For you{% bs_icon 'person-fill' %}</h1>
  <div class="row row-cols-1 row-cols-md-3 g-4 mb-5" style="min-height: 400px">
@@ -107,7 +107,7 @@
                                 </div>
                                 <div class="col-4">
                                     {% if user %}
-                                  <a href="{% url 'add_to_cart' product.id %}" class="btn btn-success w-100 p-3 rounded-0 text-center">
+                                  <a href="{% url 'add_to_cart' product.id %}" class="btn btn-success w-100 p-3 rounded-0 text-center" onclick="ShowModal()">
                                     {% bs_icon 'cart-plus' %}
                                     <span class="align-middle">Buy</span>
                                   </a>
@@ -129,5 +129,62 @@
 
 </div>
 
+    {% if show_modal %}
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Order Placed</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Your order has been successfully placed. The owner of the items will contact you shortly.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-success" data-bs-dismiss="modal">Finish</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            var myModal = new bootstrap.Modal(document.getElementById('exampleModal'), {
+                keyboard: false
+            })
+            myModal.show()
+        </script>
+    {% endif %}
+
+
+<div class="modal fade" id="CartModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Item added</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p class="lead">The item has been successfully added to your cart!</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Continue shopping</button>
+                <a href="/view_cart" class="btn btn-success">Go to cart</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+     <script>
+        function ShowModal() {
+            var myModal = new bootstrap.Modal(document.getElementById('CartModal'), {
+                keyboard: false
+            })
+            myModal.show()
+
+        }
+    </script>
+
 
 {% endblock %}
+

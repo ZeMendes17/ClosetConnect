@@ -28,7 +28,6 @@ urlpatterns = [
     path("login/", auth_views.LoginView.as_view(template_name="login.html"), name="login"),
     path("register/", views.register, name="register"),
     path("logout", auth_views.LogoutView.as_view(next_page='/login'), name="logout"),
-    path("explore/", views.explore, name="explore"),
     path("account/settings/", views.profile_settings, name="profile_settings"),
     path("account/sell/", views.sell, name="sell"),
     path("account/profile/", views.profile, name="profile"),
