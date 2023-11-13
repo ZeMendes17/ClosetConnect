@@ -11,6 +11,7 @@ class User(models.Model):
     admin = models.BooleanField(default=False)
     image = models.FileField()
     description = models.TextField(null=True, blank=True)
+    sold = models.IntegerField(default=0)
 
     def __str__(self):
         return self.name
@@ -46,15 +47,6 @@ class Comment(models.Model):
     def __str__(self):
         return self.text
 
-
-class Message(models.Model):
-    id = models.AutoField(primary_key=True)
-    receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='receiver')
-    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sender')
-    text = models.TextField(null=True, blank=True)
-
-    def __str__(self):
-        return self.text
 
 
 class Follower(models.Model):

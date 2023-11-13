@@ -14,7 +14,9 @@ user1 = User.objects.create(
     name='joao',
     email='joao@example.com',
     password='user1234',  # Você deve usar um método seguro para armazenar senhas reais
-    admin=False  # Este usuário é um administrador
+    admin=False,  # Este usuário é um administrador
+    image='users/joao.png',
+    sold=23
 )
 authenticate(username='joao', password='user1234')
 
@@ -25,7 +27,18 @@ user2 = User.objects.create(
     name='jose',
     email='jose@example.com',
     password='user1234',  # Você deve usar um método seguro para armazenar senhas reais
-    admin=False  # Este usuário não é um administrador
+    admin=False,  # Este usuário não é um administrador
+    image='users/jose.png',
+    sold=12
+)
+authenticate(username='jose', password='user1234')
+
+user3 = User.objects.create(
+    username='manel123',
+    name='Manuel',
+    email='manel@example.com',
+    password='user1234',  # Você deve usar um método seguro para armazenar senhas reais
+    admin=True,  # Este usuário não é um administrador
 )
 authenticate(username='jose', password='user1234')
 

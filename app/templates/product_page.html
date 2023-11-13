@@ -114,13 +114,12 @@
               <div class="col-lg-8 mb-4">
                 <div class=" rounded-2 px-3">
 
-
                             <div class="card shadow-0 border" style="background-color: #f0f2f5;">
                               <div class="card" style="border-radius: 15px;">
                                   <div class="card-body p-4">
                                     <div class="d-flex text-black">
                                       <div class="flex-shrink-0">
-                                        <img src="/media/{{ seller.image.name }}" alt="avatar" style="height: 60px; width: 60px; object-fit: cover; border-radius:100px;"
+                                        <img src="{% if seller.image %}/media/{{ seller.image.name }}{% else %}/media/user_no_picture.png{% endif %}" alt="avatar" style="height: 60px; width: 60px; object-fit: cover; border-radius:100px;"
                                         />
                                       </div>
                                       <div class="flex-grow-1 ms-3">
@@ -130,7 +129,7 @@
                                           style="background-color: #efefef;">
                                           <div>
                                             <p class="small text-muted mb-1">Products Sold</p>
-                                            <p class="mb-0">41</p>
+                                            <p class="mb-0">{{ seller.sold }}</p>
                                           </div>
                                           <div class="px-3">
                                             <p class="small text-muted mb-1">Followers</p>
