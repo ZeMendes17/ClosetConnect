@@ -183,8 +183,9 @@ def sell(request):
             return redirect('/')
     else:
         form = ProductForm()
+    user = User.objects.get(username=request.user.username)
 
-    return render(request, 'Sell.html', {'form': form})
+    return render(request, 'Sell.html', {'form': form, 'user': user})
 
 
 @login_required(login_url='/login')
@@ -293,7 +294,7 @@ def viewCart(request):
 
     price = round(cart.price,2)
 
-    return render(request, 'cart.html', {'cart_items': cart.items.all(), 'cart': cart, 'price': price})
+    return render(request, 'cart.html', {'cart_items': cart.items.all(), 'cart': cart, 'price': price, 'user': user})
 
 
 @login_required(login_url='/login')
