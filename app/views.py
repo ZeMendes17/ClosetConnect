@@ -497,10 +497,23 @@ def seller(request, username):
             comment.save()
             return redirect('/profile/' + username)
 
+        elif "deleteComment" in request.POST:
+            comment_id = request.POST["deleteComment"]
+            comment = Comment.objects.get(id=comment_id)
+            comment.delete()
+            return redirect('/profile/' + username)
+        # Add a default response here, or handle other cases as needed
+        return HttpResponse("Some default response")
+
+
+
+
+
 
 def admin_page(request):
     errorUser = False
     errorProduct = False
+    user = request.user
 
     if request.method == "GET":
         user = User.objects.get(username=request.user.username)
@@ -528,7 +541,7 @@ def admin_page(request):
                 users = User.objects.all()
                 products = Product.objects.all()
             return render(request, 'admin_page.html',
-                          {'users': users, 'products': products, 'errorUser': errorUser, 'errorProduct': errorProduct})
+                          {'user': user, 'users': users, 'products': products, 'errorUser': errorUser, 'errorProduct': errorProduct})
 
         elif "searchProduct" in request.POST:
             q = request.POST['searchProduct']
@@ -546,7 +559,7 @@ def admin_page(request):
                 products = Product.objects.all()
                 errorProduct = False
             return render(request, 'admin_page.html',
-                          {'users': users, 'products': products, 'errorUser': errorUser, 'errorProduct': errorProduct})
+                          {'user': user, 'users': users, 'products': products, 'errorUser': errorUser, 'errorProduct': errorProduct})
 
         elif "deleteUser" in request.POST:
             user_id = request.POST['deleteUser']
@@ -559,7 +572,7 @@ def admin_page(request):
     users = User.objects.all()
     products = Product.objects.all()
     return render(request, 'admin_page.html',
-                  {'errorUser': errorUser, 'errorProduct': errorProduct, 'users': users, 'products': products})
+                  {'user': user, 'errorUser': errorUser, 'errorProduct': errorProduct, 'users': users, 'products': products})
 
 
 @login_required(login_url='/login')
