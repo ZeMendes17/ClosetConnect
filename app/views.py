@@ -218,6 +218,15 @@ def profile(request):
                 product.delete()
                 return redirect('/account/profile')
 
+            if 'sold_' in i:
+                product_id = i.split('_')[1]
+                product = Product.objects.get(id=product_id)
+                product.delete()
+                user = User.objects.get(username=request.user.username)
+                user.sold += 1
+                user.save()
+                return redirect('/account/profile')
+
 
 @login_required(login_url='/login')
 def product_settings(request, product_id):
