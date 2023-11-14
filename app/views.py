@@ -594,7 +594,9 @@ def edit_product(request, product_id):
         return redirect('/product/' + str(product_id))
 
     if request.method == "GET":
-        form = ProductForm(initial={'name': product.name, 'description': product.description, 'price': product.price})
+        form = ProductForm(initial={'name': product.name, 'description': product.description, 'price': product.price,
+                                    'image': product.image, 'brand': product.brand, 'category': product.category,
+                                    'color': product.color})
         return render(request, 'edit_product.html', {'form': form, 'product': product})
 
     elif request.method == 'POST':
@@ -603,6 +605,9 @@ def edit_product(request, product_id):
             product.name = form.cleaned_data['name']
             product.description = form.cleaned_data['description']
             product.price = form.cleaned_data['price']
+            product.category = form.cleaned_data['category']
+            product.brand = form.cleaned_data['brand']
+            product.color = form.cleaned_data['color']
 
             # Agora, associe a imagem ao produto
             if 'image' in request.FILES:
@@ -654,4 +659,4 @@ def favorites(request):
 
 
     return render(request, 'favorites.html',
-                  {'favorites': favorites_products})
+                  {'favorites': favorites_products, 'user': user})
