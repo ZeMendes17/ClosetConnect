@@ -44,7 +44,7 @@ class UpdatePassword(forms.Form):
 class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
-        fields = ['name', 'description', 'image', 'price']
+        fields = ['name', 'description', 'image', 'price', 'brand', 'category', 'color']
         labels = {
             'name': 'Product name',
         }
@@ -53,6 +53,9 @@ class ProductForm(forms.ModelForm):
             'description': forms.Textarea(attrs={'class': 'form-control', 'style': 'max-width: 100%; resize: none; height: 100px;', 'placeholder': 'Describe your item..'}),
             'image': forms.FileInput(attrs={'class': 'form-control', 'id': 'image', 'name': 'input_file', 'accept': 'image/*'}),
             'price': forms.NumberInput(attrs={'class': 'form-control'}),
+            'brand': forms.TextInput(attrs={'class': 'form-control'}),
+            'category': forms.TextInput(attrs={'class': 'form-control'}),
+            'color': forms.TextInput(attrs={'class': 'form-control'}),
         }
 
 class CommentForm(forms.Form):
