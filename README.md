@@ -41,11 +41,17 @@ The project consists of a Django web application that allows users to shop/sell 
 ## Accounts
 
 ### Admin
-- manel123 : user1234
+| Username | Password |
+| -------- | -------- |
+| manel123 | user1234 |
 
 ### Normal User
-- joao : user1234
-- jose : user1234
+| Username | Password |
+| -------- | -------- |
+|   joao   | user1234 |
+|   jose   | user1234 |
+
+
 
 ## Features that we would like to implement in the future
 
@@ -59,8 +65,8 @@ The project consists of a Django web application that allows users to shop/sell 
 
 | Name             | Number    | E-Mail               |
 | ---------------- | --------- | -------------------- |
-| Bernardo Pinto   | 105926    |                      |
-| Filipe Obrist    | 107471    |                      |
+| Bernardo Pinto   | 105926    | bernardopinto@ua.pt  |
+| Filipe Obrist    | 107471    | filipe.obrist@ua.pt  |
 | José Mendes      | 107188    | mendes.j@ua.pt       |
 
 ## Deployment
