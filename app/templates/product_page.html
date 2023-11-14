@@ -80,10 +80,10 @@
                         </div>
                         <div class="flex-item" style="margin-left: 10px">
                             {% if user %}
-                                <a href="{% url 'add_to_cart' product.id %}" class="btn btn-success text-center">
+                                 <a href="{% url 'add_to_cart' product.id %}" class="btn btn-success text-center" onclick="ShowModal()">
                                     {% bs_icon 'bag' %}
                                     <span class="align-middle">Buy Now</span>
-                                </a>
+                                  </a>
 
                             {% else %}
                             <a href="/login" class="btn btn-success">{% bs_icon 'bag' %} Buy Now</a>
@@ -195,4 +195,37 @@
             </div>
           </div>
         </section>
+
+
+    <div class="modal fade" id="CartModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Item added</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p class="lead">The item has been successfully added to your cart!</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Continue shopping</button>
+                <a href="/view_cart" class="btn btn-success">Go to cart</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+     <script>
+        function ShowModal() {
+            var myModal = new bootstrap.Modal(document.getElementById('CartModal'), {
+                keyboard: false
+            })
+            myModal.show()
+
+        }
+    </script>
+
+
+
 {% endblock %}
