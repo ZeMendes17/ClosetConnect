@@ -1,19 +1,68 @@
-# TPW_project_1
+# ClosetConnect
 1st Project for TPW class 2023/2024
 
-TODO:
+## Project Description
 
-- [ ] Main page
-- [ ] Login page
-- [ ] Register page
-- [x] Profile page
-- [x] Profile Settings page
-- [ ] Admin page
-- [ ] See follwing page
-- [ ] Product page (with comments and ratings)
-- [x] Add product page
-- [ ] Edit product page
-- [ ] Favorites page
-- [ ] Cart page
-- [ ] Checkout page
-- [ ] Product page seen by the creator (stats, edit)
+The project consists of a Django web application that allows users to shop/sell products that they do not want in their Closet anymore.
+
+## Functionalities
+
+### User with no account initiated
+
+- Register
+- Login
+- View products
+- View product details
+
+### Normal User with account initiated
+
+- Logout
+- View products
+- View product details
+- Add/Remove product to cart
+- View cart
+- Buy products in cart
+- Add/Remove/View product to favorites
+- View/Update/Delete profile
+- View seller profile
+- Follow/Unfollow seller
+- Add/Remove comment to a user
+- Sell a product
+- Edit/Delete a product
+
+### Admin User
+
+- Same as Normal User
+- Remove products from the website
+- Remove comments from the website
+- Ban users
+- Search for users/products
+
+## Accounts
+
+### Admin
+- manel123 : user1234
+
+### Normal User
+- joao : user1234
+- jose : user1234
+
+## Features that we would like to implement in the future
+
+- Chat between users
+- Notification system
+- Checkout system
+- Order history
+- Search for products
+
+## Authors
+
+| Name             | Number    | E-Mail               |
+| ---------------- | --------- | -------------------- |
+| Bernardo Pinto   | 105926    |                      |
+| Filipe Obrist    | 107471    |                      |
+| José Mendes      | 107188    | mendes.j@ua.pt       |
+
+## Deployment
+
+http://zemendes17.pythonanywhere.com/
