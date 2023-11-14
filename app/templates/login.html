@@ -30,8 +30,9 @@
                         </div>
                     </div>
                     {% if form.errors %}
-                        <p class="validation-summary-errors" style="color:red">{{ form.errors }}
-                            and password.</p>
+                        <div class="alert alert-danger">
+                                <strong>Error!</strong> Incorrect username or password.
+                        </div>
                     {% endif %}
                     <div class="form-group" style="padding-top: 20px;">
                         <div class="col-md-offset-2 col-md-10">

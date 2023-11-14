@@ -524,7 +524,7 @@ def seller(request, username):
 def admin_page(request):
     errorUser = False
     errorProduct = False
-    user = request.user
+    user = User.objects.get(username=request.user.username)
 
     if request.method == "GET":
         user = User.objects.get(username=request.user.username)
