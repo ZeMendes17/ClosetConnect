@@ -1,5 +1,5 @@
 # ClosetConnect
-1st Project for TPW class 2023/2024
+1st Project developed for the Technologies and Web Programming class of 2023/2024
 
 ## Project Description
 
