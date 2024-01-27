@@ -72,3 +72,7 @@ The project consists of a Django web application that allows users to shop/sell 
 ## Deployment
 
 http://zemendes17.pythonanywhere.com/
+
+## Grade
+
+19.0
